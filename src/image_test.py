@@ -17,12 +17,12 @@ def draw_grid(img, rows, cols):
         cv2.line(img, (0, y), (w, y), color=(0,0,0), thickness=1)
 
 
-img_name = "./images/maze0.jpg"
+img_name = "./images/maze5.jpg"
 
 img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)
 
-# img = cv2.blur(img, (15,15))
-# img = cv2.resize(img, (img.shape[0]//5, img.shape[1]//5))
+img = cv2.blur(img, (15,15))
+img = cv2.resize(img, (img.shape[0]//5, img.shape[1]//5))
 
 # (thresh, bin_img) = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)
 (thresh, bin_img) = cv2.threshold(img, 150, 255, cv2.THRESH_BINARY)
@@ -66,8 +66,8 @@ y_dim, x_dim = trimmed_maze.shape
 # for j in range(org_dim[1]):
 #     for i in range(org_dim[0]):
 
-x_grids = 11
-y_grids = 11
+x_grids = 6
+y_grids = 8
 
 cell_size_x = x_dim//x_grids
 cell_size_y = y_dim//y_grids
