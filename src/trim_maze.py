@@ -35,13 +35,14 @@ def trim(arr):
     while end_row > start_row and 0 not in arr[end_row]:
         end_row -= 1
 
-    bounds = np.where(arr == 0)
     start_cols = []
     end_cols = []
     for i in range(start_row, end_row+1):
-        bounds = np.where(arr[i] == 0)[0]
-        start_cols.append(bounds[0])
-        end_cols.append(bounds[-1])
+        try:
+            bounds = np.where(arr[i] == 0)[0]
+            start_cols.append(bounds[0])
+            end_cols.append(bounds[-1])
+        except: continue
     start_col = stats.mode(start_cols).mode[0]
     end_col =  stats.mode(end_cols).mode[0]
 

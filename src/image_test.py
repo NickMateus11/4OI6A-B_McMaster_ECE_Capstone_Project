@@ -3,7 +3,7 @@ import numpy as np
 
 from trim_maze import trim
 
-def draw_grid(img, cols, rows):
+def draw_grid(img, rows, cols):
     h, w = img.shape
 
     # draw vertical lines
@@ -20,7 +20,12 @@ def draw_grid(img, cols, rows):
 img_name = "./images/maze0.jpg"
 
 img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)
-(thresh, bin_img) = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)
+
+# img = cv2.blur(img, (15,15))
+# img = cv2.resize(img, (img.shape[0]//5, img.shape[1]//5))
+
+# (thresh, bin_img) = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)
+(thresh, bin_img) = cv2.threshold(img, 150, 255, cv2.THRESH_BINARY)
 
 with open('maze.txt', 'w') as f:
     for i in range(img.shape[0]):
@@ -31,6 +36,11 @@ with open('maze.txt', 'w') as f:
 trimmed_maze = trim(bin_img)
 np.savetxt("maze.txt", trimmed_maze, fmt="%d")
 y_dim, x_dim = trimmed_maze.shape
+
+# cv2.imshow('OG'    , img)
+# cv2.imshow('image' , trimmed_maze*255)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
 #horizontal scanning
 # sample_res = 16
@@ -70,18 +80,21 @@ while (not done):
 print(idx)
 wall_size = idx
 
+# wall_size = 4 #hard coded
+
 # dim = bin_img.shape
 # small_img = cv2.resize(bin_img, (dim[0]//5, dim[1]//5))
 # pixel_img = cv2.resize(small_img, dim, interpolation=cv2.INTER_NEAREST)
 
-# cv2.imshow('OG'    , img)
+# # cv2.imshow('OG'    , img)
 # cv2.imshow('image' , bin_img)
 
-# # cv2.imshow('image2', small_img)
-# cv2.imshow('image3', pixel_img)
+# # # cv2.imshow('image2', small_img)
+# # cv2.imshow('image3', pixel_img)
 
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
+
 
 '''
 pass the grid square over the image, measure the density of black or white pixels
@@ -90,25 +103,26 @@ move grid square over by its length and check again - repeat
 '''
 
 def find_walls(arr, row, col, cell_size_y, cell_size_x, wall_size):
-    thresh = 0.7  # higher is more sensitive
+    sensitivity = 0.83  # higher is more sensitive
 
     check_buf = max(min(cell_size_x, cell_size_y) // 3, wall_size) 
     col_left = col
     col_right = col+cell_size_x
     row_top = row
     row_bottom = row+cell_size_y
+    check_offset = int(max(min(cell_size_x, cell_size_y) / 2.5, wall_size))
 
-    # print(np.average(arr[row_top: row_top+check_buf , col_left+wall_size//2 : col_right-wall_size//2]))
+    # print(np.average(arr[row_top : row_top+check_buf, col_left+check_offset : col_right-check_offset]))
     # try:
-    #     cv2.imshow('test' , arr[row_top : row_top+check_buf, col_left+wall_size//2 : col_right-wall_size//2] * 255)
+    #     cv2.imshow('test' , arr[row_top : row_top+check_buf , col_left+check_offset : col_right-check_offset] * 255)
     #     cv2.waitKey(0)
     #     cv2.destroyAllWindows()
     # except: pass
 
-    top    = np.average(arr[row_top              : row_top+check_buf       , col_left+wall_size//2 : col_right-wall_size//2]) < thresh
-    bottom = np.average(arr[row_bottom-check_buf : row_bottom              , col_left+wall_size//2 : col_right-wall_size//2]) < thresh
-    left   = np.average(arr[row_top+wall_size//2 : row_bottom-wall_size//2 , col_left              : col_left+check_buf ])    < thresh
-    right  = np.average(arr[row_top+wall_size//2 : row_bottom-wall_size//2 , col_right-check_buf   : col_right          ])    < thresh
+    top    = np.average(arr[row_top              : row_top+check_buf       , col_left+check_offset : col_right-check_offset]) < sensitivity
+    bottom = np.average(arr[row_bottom-check_buf : row_bottom              , col_left+check_offset : col_right-check_offset]) < sensitivity
+    left   = np.average(arr[row_top+check_offset : row_bottom-check_offset , col_left              : col_left+check_buf ])    < sensitivity
+    right  = np.average(arr[row_top+check_offset : row_bottom-check_offset , col_right-check_buf   : col_right          ])    < sensitivity
     return top, bottom, left, right
 
 compressed_maze = np.ones( (2*y_grids+1, 2*x_grids+1) )
