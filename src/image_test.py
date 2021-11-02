@@ -33,7 +33,7 @@ with open('maze.txt', 'w') as f:
             f.write('^' if bin_img[i,j] else '#')
         f.write('\n')
 
-trimmed_maze = trim(bin_img)
+trimmed_maze = trim(bin_img) // 255 # trim and normalize to 0s and 1s
 np.savetxt("maze.txt", trimmed_maze, fmt="%d")
 y_dim, x_dim = trimmed_maze.shape
 

@@ -46,5 +46,5 @@ def trim(arr):
     start_col = stats.mode(start_cols).mode[0]
     end_col =  stats.mode(end_cols).mode[0]
 
-    trimmed_arr = arr[start_row:end_row+1, start_col:end_col+1] // 255 # normalize to 0s and 1s
+    trimmed_arr = arr[start_row:end_row+1, start_col:end_col+1]
     return trimmed_arr
