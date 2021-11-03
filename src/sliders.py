@@ -13,12 +13,13 @@ def on_change(val):
 # blur
 # sensitivity
  
-img = cv2.imread('./images/maze0.jpg')
+img = cv2.imread('./images/maze5.jpg', cv2.IMREAD_GRAYSCALE)
+img = cv2.resize(img, (img.shape[0]//5, img.shape[1]//5))
  
 windowName = 'image'
  
 cv2.imshow(windowName, img)
-cv2.createTrackbar('slider', windowName, 0, 255, on_change)
+cv2.createTrackbar('slider', windowName, 150, 255, on_change)
  
 cv2.waitKey(0)
 cv2.destroyAllWindows()
