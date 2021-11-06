@@ -28,22 +28,22 @@ def click_and_mark(event, x, y, flags, param):
         x_end   = int(x_start  + (img_dim_x / grid_x)) 
         y_end   = int(y_start  + (img_dim_y / grid_y))
 
+        # copy and overwrite image
+        image_copy[:] = image.copy()
         
         # draw start cell
-        if event == cv2.EVENT_LBUTTONDOWN and sum(image_copy[y,x])>0: # L Mouse && not a wall
-            # copy and overwrite image
-            image_copy[:] = image.copy()
-            start_rect[:] = [(x_start, y_start) , (x_end, y_end)]
-            cv2.rectangle(image_copy, (x_start, y_start) , (x_end, y_end), (0, 255, 0), 4)
+        if event == cv2.EVENT_LBUTTONDOWN:
+            if sum(image_copy[y,x])>0: # not a wall
+                start_rect[:] = [(x_start, y_start) , (x_end, y_end)]
+            cv2.rectangle(image_copy, start_rect[0], start_rect[1], (0, 255, 0), 4)
             if end_rect and not end_rect == start_rect:
                 cv2.rectangle(image_copy, end_rect[0], end_rect[1], (180, 100, 255), 4)
             else: 
                 end_rect[:] = []
         # draw end cell
-        if event == cv2.EVENT_RBUTTONDOWN and sum(image_copy[y,x])>0: # R Mouse && not a wall
-            # copy and overwrite image
-            image_copy[:] = image.copy()
-            end_rect[:] = [(x_start, y_start) , (x_end, y_end)]
+        elif event == cv2.EVENT_RBUTTONDOWN:
+            if sum(image_copy[y,x])>0: # not a wall
+                end_rect[:] = [(x_start, y_start) , (x_end, y_end)]
             cv2.rectangle(image_copy, end_rect[0], end_rect[1], (180, 100, 255), 4)
             if start_rect and not end_rect == start_rect:
                 cv2.rectangle(image_copy, start_rect[0], start_rect[1], (0, 255, 0), 4)
@@ -96,7 +96,7 @@ def main():
         cv2.imshow(win_name, image_copy)
 
         # start and end exist
-        if len(start_rect) and len(end_rect):
+        if len(start_rect) and len(end_rect): # TODO: don't re-solve maze if endpoints remain the same
             start = ((start_rect[0][0] + start_rect[1][0]) // 2 , (start_rect[0][1] + start_rect[1][1]) // 2)
             end = ((end_rect[0][0] + end_rect[1][0]) // 2 , (end_rect[0][1] + end_rect[1][1]) // 2)
             solution = solve(maze, \
