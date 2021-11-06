@@ -14,7 +14,7 @@ def on_change(val):
 # sensitivity
  
 img = cv2.imread('./images/maze5.jpg', cv2.IMREAD_GRAYSCALE)
-img = cv2.resize(img, (img.shape[0]//5, img.shape[1]//5))
+img = cv2.resize(img, (img.shape[1]//5, img.shape[0]//5))
  
 windowName = 'image'
  

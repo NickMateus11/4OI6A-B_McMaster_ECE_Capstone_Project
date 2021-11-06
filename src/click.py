@@ -1,13 +1,18 @@
 import cv2
-from trim_maze import trim
-import numpy as np
 
+from image_utils import draw_grid
+from image_test import maze_compression
 
 def click_and_mark(event, x, y, flags, param):
-    global image_copy, green_rect, pink_rect
 
-    if event == cv2.EVENT_LBUTTONDOWN:
-        # find the grid square that the mouse is in, colour it
+    if event in [cv2.EVENT_LBUTTONDOWN, cv2.EVENT_RBUTTONDOWN]:
+        # unpack params
+        image_copy, grids, end_rect, start_rect = param
+        grid_y, grid_x = grids
+
+        img_dim_y, img_dim_x = image_copy.shape[0], image_copy.shape[1]
+
+        # calc grid cell
         x_cell =  x // (img_dim_x / grid_x) 
         y_cell =  y // (img_dim_y / grid_y)
 
@@ -16,68 +21,49 @@ def click_and_mark(event, x, y, flags, param):
         x_end   = int(x_start  + (img_dim_x / grid_x)) 
         y_end   = int(y_start  + (img_dim_y / grid_y))
 
-        # reset image, then draw new rect
-        image_copy = image.copy()
-        green_rect = [(x_start, y_start) , (x_end, y_end)]
-        cv2.rectangle(image_copy, (x_start, y_start) , (x_end, y_end), (0, 255, 0), 4)
-        if pink_rect and not pink_rect == green_rect:
-            cv2.rectangle(image_copy, pink_rect[0], pink_rect[1], (180, 100, 255), 4)
-        else: 
-            pink_rect = []
-    
-    if event == cv2.EVENT_RBUTTONDOWN:
-        # find the grid square that the mouse is in, colour it
-        x_cell =  x // (img_dim_x / grid_x) 
-        y_cell =  y // (img_dim_y / grid_y)
-
-        x_start = int(x_cell   * (img_dim_x / grid_x))
-        y_start = int(y_cell   * (img_dim_y / grid_y))
-        x_end   = int(x_start  + (img_dim_x / grid_x)) 
-        y_end   = int(y_start  + (img_dim_y / grid_y))
-
-        # reset image, then draw new rect
-        image_copy = image.copy()
-        pink_rect = [(x_start, y_start) , (x_end, y_end)]
-        cv2.rectangle(image_copy, pink_rect[0], pink_rect[1], (180, 100, 255), 4)
-        if green_rect and not pink_rect == green_rect:
-            cv2.rectangle(image_copy, green_rect[0], green_rect[1], (0, 255, 0), 4)
-        else: 
-            green_rect = []
+        # copy and overwrite image
+        image_copy[:] = image.copy()
+        
+        # place start cell
+        if event == cv2.EVENT_LBUTTONDOWN:
+            start_rect[:] = [(x_start, y_start) , (x_end, y_end)]
+            cv2.rectangle(image_copy, (x_start, y_start) , (x_end, y_end), (0, 255, 0), 4)
+            if end_rect and not end_rect == start_rect:
+                cv2.rectangle(image_copy, end_rect[0], end_rect[1], (180, 100, 255), 4)
+            else: 
+                end_rect[:] = []
+        # place end cell
+        else:
+            end_rect[:] = [(x_start, y_start) , (x_end, y_end)]
+            cv2.rectangle(image_copy, end_rect[0], end_rect[1], (180, 100, 255), 4)
+            if start_rect and not end_rect == start_rect:
+                cv2.rectangle(image_copy, start_rect[0], start_rect[1], (0, 255, 0), 4)
+            else: 
+                start_rect[:] = []
 
 
-def draw_grid(img, rows, cols):
-    h, w, _ = img.shape
-
-    # draw vertical lines
-    for x in np.linspace(start=0, stop=w, num=cols+1):
-        x = int(round(x))
-        cv2.line(img, (x, 0), (x, h), color=(0,0,0), thickness=1)
-
-    # draw horizontal lines
-    for y in np.linspace(start=0, stop=h, num=rows+1):
-        y = int(round(y))
-        cv2.line(img, (0, y), (w, y), color=(0,0,0), thickness=1)
-
-
-green_rect = []
-pink_rect = []
+start_rect = []
+end_rect = []
 
 grid_x = 11
 grid_y = 11
 
-# load, binary threshold, trim image
-image = cv2.imread("./images/maze0.jpg")
-(thresh, image) = cv2.threshold(image, 150, 255, cv2.THRESH_BINARY)
-image = trim(image)
-img_dim_y, img_dim_x, _ = image.shape
-draw_grid(image, grid_y, grid_x)
+# compress maze image
+image, ref_img = maze_compression("./images/maze0.jpg", (grid_y, grid_x), 4, 0.83)
+image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+image = cv2.resize(image, (ref_img.shape[1]*2,ref_img.shape[0]*2), interpolation=cv2.INTER_NEAREST)
+
+img_dim_y, img_dim_x = image.shape[0], image.shape[1]
+
+draw_grid(image, grid_y*2+1, grid_x*2+1)
 
 win_name = "image"
 cv2.imshow(win_name, image)
 
-cv2.setMouseCallback(win_name, click_and_mark)
-
 image_copy = image.copy()
+cv2.setMouseCallback(win_name, click_and_mark, \
+    param=[image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
+
 while (True):
     cv2.imshow(win_name, image_copy)
     key = cv2.waitKey(1) & 0xFF
