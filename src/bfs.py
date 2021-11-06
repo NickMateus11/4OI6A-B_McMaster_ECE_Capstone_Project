@@ -21,7 +21,7 @@ def make_step(k, m, a): # TODO: optimize this? - don't be O(n^2)
 #             print( str(m[i][j]).ljust(2),end=' ')
 #         print()
 
-# def draw_matrix(a,m, the_path = []):
+# def draw_matrix(a,m, the_path = [], start=None, end=None, zoom=20, borders=6):
 #     im = Image.new('RGB', (zoom * len(a[0]), zoom * len(a)), (255, 255, 255))
 #     draw = ImageDraw.Draw(im)
 #     for i in range(len(a)):
@@ -63,7 +63,7 @@ def solve(a, start, end):
   while m[end[0]][end[1]] == 0:
       k += 1
       make_step(k, m, a)
-      # draw_matrix(a, m)
+      # draw_matrix(a, m, start=start, end=end)
 
   i, j = end
   k = m[i][j]
@@ -85,13 +85,13 @@ def solve(a, start, end):
       i, j = i, j+1
       the_path.append((i, j))
       k -= 1
-    # draw_matrix(a, m, the_path)
+    # draw_matrix(a, m, the_path, start=start, end=end)
 
   # for i in range(10):
   #     if i % 2 == 0:
-  #         draw_matrix(a, m, the_path)
+  #         draw_matrix(a, m, the_path, start=start, end=end)
   #     else:
-  #         draw_matrix(a, m)
+  #         draw_matrix(a, m, start=start, end=end)
 
   # print_m(m)
   # print(the_path)
@@ -102,6 +102,7 @@ def solve(a, start, end):
 
   return the_path
 
+images = []
 
 def main():
   # load numpy array (and switch convention - walls=1 empty=0)
@@ -111,10 +112,9 @@ def main():
       for j in range(len(a[0])):
           a[i][j] = int(not a[i][j])
 
-  zoom = 20
-  borders = 6
+  # zoom = 20
+  # borders = 6
 
-  images = []
   start = 1,1
   end = 10,10
 
