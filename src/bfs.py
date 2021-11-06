@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 
-def make_step(k, m, a):
+def make_step(k, m, a): # TODO: optimize this? - don't be O(n^2)
   for i in range(len(m)):
     for j in range(len(m[i])):
       if m[i][j] == k:
