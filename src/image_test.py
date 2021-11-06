@@ -85,7 +85,7 @@ def maze_compression(img_name, grid_size, wall_size, sensitivity, do_blur_and_re
                 except: pass
 
     compressed_maze = compressed_maze.astype(np.uint8) # convert np array to valid cv2 image
-    return compressed_maze*255, trimmed_maze*255
+    return compressed_maze, trimmed_maze*255
 
 
 if __name__ == '__main__':
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     draw_grid(reference_maze, y_grids, x_grids)
     cv2.imshow('image' , reference_maze)
 
-    pixel_img = cv2.resize(new_maze, (reference_maze.shape[1],reference_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
+    pixel_img = cv2.resize(new_maze*255, (reference_maze.shape[1],reference_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
     cv2.imshow('output', pixel_img)
 
     np.save('maze_small', new_maze)
