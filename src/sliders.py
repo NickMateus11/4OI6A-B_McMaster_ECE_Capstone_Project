@@ -1,25 +1,61 @@
 import cv2
- 
- 
-def on_change(val):
- 
+from image_test import maze_compression
+
+
+def threshchange(val):
+    global thresh
+    thresh = val
+    imgchange(thresh, blur, sens)
+
+
+def blurchange(val):
+    global blur
+    if val == 0:
+        blur = 1
+    else:
+        blur = val
+    imgchange(thresh, blur, sens)
+
+
+def senschange(val):
+    global sens
+    sens = val/100.0
+    imgchange(thresh, blur, sens)
+
+
+def imgchange(thresh_val, blur_val, sens_val):
     imageCopy = img.copy()
- 
-    cv2.putText(imageCopy, str(val), (0, imageCopy.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4)
-    (thresh, bin_img) = cv2.threshold(imageCopy, val, 255, cv2.THRESH_BINARY)
-    cv2.imshow(windowName, bin_img)
- 
+    blr_img = cv2.blur(imageCopy, (blur_val, blur_val))
+    # rsz_img = cv2.resize(blr_img, (blr_img.shape[1]//5, blr_img.shape[0]//5))
+    (_, bin_img) = cv2.threshold(blr_img, thresh_val, 255, cv2.THRESH_BINARY)
+    (cmpr_img, ref_maze) = maze_compression(bin_img, (11, 11), 4, sens)
+    cmpr_img = cv2.resize(
+        cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
+    bin_img = cv2.resize(
+        bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
+    final_frame = cv2.hconcat((cmpr_img, bin_img))
+    cv2.imshow(windowName, final_frame)
+
+
 # binary threshold
 # blur
 # sensitivity
- 
-img = cv2.imread('./images/maze5.jpg', cv2.IMREAD_GRAYSCALE)
-img = cv2.resize(img, (img.shape[1]//5, img.shape[0]//5))
- 
+img = cv2.imread('./images/maze0.jpg', cv2.IMREAD_GRAYSCALE)  # input
+# resized_img = cv2.resize(img, (img.shape[1]//5, img.shape[0]//5))
+
+thresh = 150
+blur = 15
+sens = 0.83
+
 windowName = 'image'
- 
+
 cv2.imshow(windowName, img)
-cv2.createTrackbar('slider', windowName, 150, 255, on_change)
- 
+cv2.createTrackbar('Blur', windowName, 15, 30, blurchange)
+cv2.createTrackbar('Threshold', windowName, 150, 255, threshchange)
+cv2.createTrackbar('Sens', windowName, 83, 100, senschange)
+
+# or vconcat for vertical concatenation
+
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
