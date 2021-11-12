@@ -36,7 +36,6 @@ def imgchange(thresh_val, blur_val, sens_val):
     # bin_img = cv2.resize(bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
 
     final_frame = cv2.hconcat((cmpr_img, ref_maze))
-
     cv2.imshow(windowName, final_frame)
 
 

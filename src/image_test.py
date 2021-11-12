@@ -37,6 +37,7 @@ def find_walls(arr, row, col, cell_size_y, cell_size_x, wall_size, sensitivity):
 
 
 def preprocess_image(img, blur=1, thresh=150, resize=1):
+    # order matters
     img = cv2.blur(img, (blur, blur))
     img = cv2.resize(img, (img.shape[1]//resize, img.shape[0]//resize))
     (_, bin_img) = cv2.threshold(img, thresh, 255, cv2.THRESH_BINARY)

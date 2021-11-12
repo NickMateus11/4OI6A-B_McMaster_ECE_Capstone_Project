@@ -67,14 +67,16 @@ def main():
     start_rect = []
     end_rect = []
 
-    grid_x = 11
-    grid_y = 11
+    grid_x = 6
+    grid_y = 8
 
     # compress maze image
-    maze, ref_img = maze_compression("./images/maze0.jpg", (grid_y, grid_x), 4, 0.83)
+    image_name = "./images/maze5.jpg"
+    img = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)  # input
+    maze, ref_img = maze_compression(img, (grid_y, grid_x), 4, 0.83, preprocess={'thresh': 150, 'blur':15, 'resize':5})
 
     image = cv2.cvtColor(maze*255, cv2.COLOR_GRAY2BGR)
-    image = cv2.resize(image, (ref_img.shape[1]*2,ref_img.shape[0]*2), interpolation=cv2.INTER_NEAREST)
+    image = cv2.resize(image, (ref_img.shape[1],ref_img.shape[0]), interpolation=cv2.INTER_NEAREST)
 
     img_dim_y, img_dim_x = image.shape[0], image.shape[1]
 
