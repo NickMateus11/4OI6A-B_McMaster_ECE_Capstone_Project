@@ -36,19 +36,23 @@ def find_walls(arr, row, col, cell_size_y, cell_size_x, wall_size, sensitivity):
     return top_wall, bottom_wall, left_wall, right_wall
 
 
-def maze_compression(img_name, grid_size, wall_size, sensitivity, do_blur_and_resize=False):
+def preprocess_image(img, blur=1, thresh=150, resize=1):
+    img = cv2.blur(img, (blur, blur))
+    img = cv2.resize(img, (img.shape[1]//resize, img.shape[0]//resize))
+    (_, bin_img) = cv2.threshold(img, thresh, 255, cv2.THRESH_BINARY)
+    return bin_img
+
+
+def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None):
     (y_grids, x_grids) = grid_size
 
-    # img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)
-    img = img_name
-    if do_blur_and_resize:
-        img = cv2.blur(img, (10, 10))
-        img = cv2.resize(img, (img.shape[1]//5, img.shape[0]//5))
-    (thresh, bin_img) = cv2.threshold(img, 150, 255, cv2.THRESH_BINARY)
-    trimmed_maze = trim(bin_img) // 255  # trim and normalize to 0s and 1s
+    if preprocess:
+        img = preprocess_image(img, **preprocess)
+
+    trimmed_maze = trim(img) // 255  # trim and normalize to 0s and 1s
     y_dim, x_dim = trimmed_maze.shape
 
-    np.savetxt("maze.txt", trimmed_maze, fmt="%d")
+    # np.savetxt("maze.txt", trimmed_maze, fmt="%d")
 
     cell_size_x = x_dim//x_grids
     cell_size_y = y_dim//y_grids
@@ -114,8 +118,7 @@ def maze_compression(img_name, grid_size, wall_size, sensitivity, do_blur_and_re
                 except:
                     pass
 
-    compressed_maze = compressed_maze.astype(
-        np.uint8)  # convert np array to valid cv2 image
+    compressed_maze = compressed_maze.astype(np.uint8)  # convert np array to valid cv2 image
     return compressed_maze, trimmed_maze*255
 
 
@@ -127,9 +130,9 @@ if __name__ == '__main__':
     sensitivity = 0.83
 
     img_name = "./images/maze5.jpg"
+    img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
 
-    new_maze, reference_maze = maze_compression(
-        img_name, (y_grids, x_grids), wall_size, sensitivity, do_blur_and_resize=True)
+    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), wall_size, sensitivity, preprocess={'blur':15, 'thresh': 150, 'resize': 5})
 
     draw_grid(reference_maze, y_grids, x_grids)
     cv2.imshow('image', reference_maze)
