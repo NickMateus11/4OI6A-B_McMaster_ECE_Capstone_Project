@@ -10,7 +10,7 @@ def threshchange(val):
 
 def blurchange(val):
     global blur
-    blur = val if val>0 else 1
+    blur = val if val > 0 else 1
     imgchange(thresh, blur, sens)
 
 
@@ -26,13 +26,16 @@ def imgchange(thresh_val, blur_val, sens_val):
     blr_img = cv2.blur(imageCopy, (blur_val, blur_val))
 
     if resize_required:
-        blr_img = cv2.resize(blr_img, (blr_img.shape[1]//5, blr_img.shape[0]//5))
+        blr_img = cv2.resize(
+            blr_img, (blr_img.shape[1]//5, blr_img.shape[0]//5))
 
     (_, bin_img) = cv2.threshold(blr_img, thresh_val, 255, cv2.THRESH_BINARY)
 
-    (cmpr_img, ref_maze) = maze_compression(bin_img, (y_cell, x_cell), 4, sens_val)
+    (cmpr_img, ref_maze) = maze_compression(
+        bin_img, (y_cell, x_cell), 4, sens_val)
 
-    cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
+    cmpr_img = cv2.resize(
+        cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
     # bin_img = cv2.resize(bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
 
     final_frame = cv2.hconcat((cmpr_img, ref_maze))
