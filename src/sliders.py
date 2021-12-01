@@ -7,12 +7,10 @@ def threshchange(val):
     thresh = val
     imgchange(thresh, blur, sens, block, c)
 
-
 def blurchange(val):
     global blur
     blur = val if val>0 else 1
     imgchange(thresh, blur, sens, block, c)
-
 
 def senschange(val):
     global sens
@@ -29,7 +27,6 @@ def cchange(val):
     c = val/100.0
     imgchange(thresh, blur, sens, block, c)
 
-
 def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
     imageCopy = img.copy()
 
@@ -43,7 +40,7 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
     bin_img = cv2.adaptiveThreshold(blr_img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_val, c_val)
 
     # TODO: use the preprocess features more
-    (cmpr_img, ref_maze) = maze_compression(bin_img, (y_cell, x_cell), 4, sens_val) 
+    (cmpr_img, ref_maze) = maze_compression(imageCopy, (y_cell, x_cell), 4, sens_val, preprocess={"blur":blur_val, "resize":5, "block":block_val, "c":c_val, "adaptive":True}) 
 
     cmpr_img = cv2.resize(
         cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
@@ -61,7 +58,7 @@ resize_required = True
 x_cell = 8
 y_cell = 8
 
-img = cv2.imread('./images/maze_real0.png', cv2.IMREAD_GRAYSCALE)  # input
+img = cv2.imread('./images/maze_ball1.png', cv2.IMREAD_GRAYSCALE)  # input
 show_img = img
 if resize_required:
     show_img = cv2.resize(img, (img.shape[1]//5, img.shape[0]//5))

@@ -36,12 +36,14 @@ def find_walls(arr, row, col, cell_size_y, cell_size_x, wall_size, sensitivity):
     return top_wall, bottom_wall, left_wall, right_wall
 
 
-def preprocess_image(img, blur=1, thresh=150, resize=1, block=8, c=2):
+def preprocess_image(img, blur=1, thresh=150, resize=1, block=9, c=2, adaptive=False):
     # order matters
     img = cv2.blur(img, (blur, blur))
     img = cv2.resize(img, (img.shape[1]//resize, img.shape[0]//resize))
-    (_, bin_img) = cv2.threshold(img, thresh, 255, cv2.THRESH_BINARY)
-    # bin_img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block, c)
+    if adaptive:
+        bin_img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block, c)
+    else:
+        (_, bin_img) = cv2.threshold(img, thresh, 255, cv2.THRESH_BINARY)
     return bin_img
 
 
@@ -51,8 +53,10 @@ def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None):
     if preprocess:
         img = preprocess_image(img, **preprocess)
 
-    trimmed_maze = trim(img) // 255  # trim and normalize to 0s and 1s
-    y_dim, x_dim = trimmed_maze.shape
+    # TODO: remove trimming - doesn't work well with real-world images
+    # trimmed_maze = trim(img) // 255  # trim and normalize to 0s and 1s
+    trimmed_maze = img // 255
+    y_dim, x_dim = trimmed_maze.shape[:2]
 
     # np.savetxt("maze.txt", trimmed_maze, fmt="%d")
 
