@@ -38,7 +38,7 @@ def find_walls(arr, row, col, cell_size_y, cell_size_x, wall_size, sensitivity):
 
 def preprocess_image(img, blur=1, thresh=150, resize=1, block=9, c=2, adaptive=False):
     # order matters
-    img = cv2.blur(img, (blur, blur))
+    img = cv2.blur(img, (blur,blur))
     img = cv2.resize(img, (img.shape[1]//resize, img.shape[0]//resize))
     if adaptive:
         bin_img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block, c)
@@ -47,15 +47,17 @@ def preprocess_image(img, blur=1, thresh=150, resize=1, block=9, c=2, adaptive=F
     return bin_img
 
 
-def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None):
+def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None, trim=False):
     (y_grids, x_grids) = grid_size
 
     if preprocess:
         img = preprocess_image(img, **preprocess)
 
     # TODO: remove trimming - doesn't work well with real-world images
-    # trimmed_maze = trim(img) // 255  # trim and normalize to 0s and 1s
-    trimmed_maze = img // 255
+    if trim:
+        trimmed_maze = trim(img) // 255  # trim and normalize to 0s and 1s
+    else: 
+        trimmed_maze = img // 255
     y_dim, x_dim = trimmed_maze.shape[:2]
 
     # np.savetxt("maze.txt", trimmed_maze, fmt="%d")
@@ -72,57 +74,33 @@ def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None):
             coord_mapping_y = 2*i + 1
             coord_mapping_x = 2*j + 1
             if top:
-                try:
-                    compressed_maze[coord_mapping_y-1, coord_mapping_x] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y-1, coord_mapping_x-1] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y-1, coord_mapping_x+1] = 0
-                except:
-                    pass
+                try: compressed_maze[coord_mapping_y-1, coord_mapping_x] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y-1, coord_mapping_x-1] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y-1, coord_mapping_x+1] = 0
+                except: pass
             if bottom:
-                try:
-                    compressed_maze[coord_mapping_y+1, coord_mapping_x] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y+1, coord_mapping_x-1] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y+1, coord_mapping_x+1] = 0
-                except:
-                    pass
+                try: compressed_maze[coord_mapping_y+1, coord_mapping_x] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y+1, coord_mapping_x-1] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y+1, coord_mapping_x+1] = 0
+                except: pass
             if left:
-                try:
-                    compressed_maze[coord_mapping_y, coord_mapping_x-1] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y-1, coord_mapping_x-1] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y+1, coord_mapping_x-1] = 0
-                except:
-                    pass
+                try: compressed_maze[coord_mapping_y, coord_mapping_x-1] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y-1, coord_mapping_x-1] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y+1, coord_mapping_x-1] = 0
+                except: pass
             if right:
-                try:
-                    compressed_maze[coord_mapping_y, coord_mapping_x+1] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y-1, coord_mapping_x+1] = 0
-                except:
-                    pass
-                try:
-                    compressed_maze[coord_mapping_y+1, coord_mapping_x+1] = 0
-                except:
-                    pass
+                try: compressed_maze[coord_mapping_y, coord_mapping_x+1] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y-1, coord_mapping_x+1] = 0
+                except: pass
+                try: compressed_maze[coord_mapping_y+1, coord_mapping_x+1] = 0
+                except: pass
 
     compressed_maze = compressed_maze.astype(np.uint8)  # convert np array to valid cv2 image
     return compressed_maze, trimmed_maze*255
