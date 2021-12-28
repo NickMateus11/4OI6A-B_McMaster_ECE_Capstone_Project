@@ -30,21 +30,20 @@ def cchange(val):
 def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
     imageCopy = img.copy()
 
-    blr_img = cv2.blur(imageCopy, (blur_val,blur_val))
+    # blr_img = cv2.blur(imageCopy, (blur_val,blur_val))
 
-    if resize_required:
-        blr_img = cv2.resize(
-            blr_img, (blr_img.shape[1]//5, blr_img.shape[0]//5))
+    # if resize_required:
+    #     blr_img = cv2.resize(
+    #         blr_img, (blr_img.shape[1]//5, blr_img.shape[0]//5))
 
     # (_, bin_img) = cv2.threshold(blr_img, thresh_val, 255, cv2.THRESH_BINARY)
     # bin_img = cv2.adaptiveThreshold(blr_img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_val, c_val)
 
     # TODO: use the preprocess features more
     (cmpr_img, ref_maze) = maze_compression(imageCopy, (y_cell, x_cell), 4, sens_val, 
-                        preprocess={'thresh':thresh_val, "blur":blur_val, "resize":5, "block":block_val, "c":c_val, "adaptive": True}) 
+                        preprocess={'thresh':thresh_val, "blur":blur_val, "resize":5, "block":block_val, "c":c_val, "adaptive": False}) 
 
-    cmpr_img = cv2.resize(
-        cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
+    cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
     # bin_img = cv2.resize(bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
 
     final_frame = cv2.hconcat((cmpr_img, ref_maze))
