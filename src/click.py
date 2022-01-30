@@ -98,7 +98,7 @@ def main():
         cv2.imshow(win_name, image_copy)
 
         # start and end exist
-        if len(start_rect) and len(end_rect): # TODO: don't re-solve maze if endpoints remain the same
+        if len(start_rect) and len(end_rect):
             start = ((start_rect[0][0] + start_rect[1][0]) // 2 , (start_rect[0][1] + start_rect[1][1]) // 2)
             end = ((end_rect[0][0] + end_rect[1][0]) // 2 , (end_rect[0][1] + end_rect[1][1]) // 2)
             solution = solve(maze, \
