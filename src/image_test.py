@@ -107,16 +107,17 @@ def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None, tr
 
 
 if __name__ == '__main__':
-    x_grids = 6
+    x_grids = 8
     y_grids = 8
     wall_size = 4  # hard coded
 
-    sensitivity = 0.83
+    sensitivity = 0.53
 
-    img_name = "./images/maze5.jpg"
+    img_name = "./images/maze_ball_trim.png"
     img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
 
-    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), wall_size, sensitivity, preprocess={'blur':15, 'thresh': 150, 'resize': 5})
+    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), wall_size, sensitivity, 
+                        preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
 
     draw_grid(reference_maze, y_grids, x_grids)
     cv2.imshow('image', reference_maze)
