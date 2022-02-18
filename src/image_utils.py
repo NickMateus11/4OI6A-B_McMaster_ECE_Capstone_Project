@@ -9,12 +9,12 @@ def draw_grid(img, rows, cols):
     # draw vertical lines
     for x in np.linspace(start=0, stop=w, num=cols+1):
         x = int(round(x))
-        cv2.line(img, (x, 0), (x, h), color=(0,0,0), thickness=1)
+        cv2.line(img, (x, 0), (x, h), color=(128,)*3, thickness=1)
 
     # draw horizontal lines
     for y in np.linspace(start=0, stop=h, num=rows+1):
         y = int(round(y))
-        cv2.line(img, (0, y), (w, y), color=(0,0,0), thickness=1)
+        cv2.line(img, (0, y), (w, y), color=(128,)*3, thickness=1)
 
 
 def trim_file(filename):

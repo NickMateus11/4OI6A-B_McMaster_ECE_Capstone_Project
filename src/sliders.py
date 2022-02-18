@@ -1,5 +1,6 @@
 import cv2
 from image_test import maze_compression
+from image_utils import draw_grid
 
 
 def threshchange(val):
@@ -41,13 +42,16 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
 
     # TODO: use the preprocess features more
     (cmpr_img, ref_maze) = maze_compression(imageCopy, (y_cell, x_cell), 4, sens_val, 
-                        preprocess={'thresh':thresh_val, "blur":blur_val, "resize":5, "block":block_val, "c":c_val, "adaptive": False}) 
+                        preprocess={'thresh':thresh_val, "blur":blur_val, "resize":1, "block":block_val, "c":c_val, "adaptive": False}) 
 
     cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
     # bin_img = cv2.resize(bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
 
+    draw_grid(ref_maze, y_cell, x_cell)
+
     final_frame = cv2.hconcat((cmpr_img, ref_maze))
-    cv2.imshow(windowName, final_frame)
+    upscaled = cv2.resize(final_frame, (x//2 * 2,y//2), interpolation=cv2.INTER_NEAREST)
+    cv2.imshow(windowName, upscaled)
 
 
 # binary threshold
@@ -58,12 +62,12 @@ resize_required = True
 x_cell = 8
 y_cell = 8
 
-img = cv2.imread('./images/maze_ball_trim.png')  # input
+img = cv2.imread('./images/pi_cam.png')  # input
+y,x,_ = img.shape
+img = cv2.resize(img, (200, 100))
+
 # img = cv2.imread('./images/maze_real0.png')  # input
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-show_img = img
-if resize_required:
-    show_img = cv2.resize(img, (img.shape[1]//5, img.shape[0]//5))
 
 # frame_HSV = cv2.cvtColor(show_img, cv2.COLOR_BGR2HSV)
 # img = cv2.inRange(frame_HSV, (0, 0, 73), (360, 21, 255))
@@ -76,14 +80,12 @@ c = 2
 
 windowName = 'image'
 
-cv2.imshow(windowName, show_img)
+imgchange(thresh, blur, sens, block, c)
 cv2.createTrackbar('Blur', windowName, 15, 100, blurchange)
 cv2.createTrackbar('Threshold**broken', windowName, 150, 255, threshchange)
 cv2.createTrackbar('Sens', windowName, 83, 100, senschange)
 cv2.createTrackbar('Block', windowName, 11, 255, blockchange)
 cv2.createTrackbar('C', windowName, 2, 255, cchange)
-
-# or vconcat for vertical concatenation
 
 
 cv2.waitKey(0)
