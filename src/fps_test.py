@@ -12,7 +12,7 @@ from maze_thread import MazeThread
 def main(args):
 	# initialize the camera and stream
 	print("[INFO] sampling THREADED frames from `picamera` module...")
-	video_stream = PiVideoStream(resolution=(320, 240))
+	video_stream = PiVideoStream(resolution=(320, 240), sensor_mode=1) # sensor mode 1: small FOV
 	maze_stream = MazeThread(video_stream)
 
 	video_stream.start()
