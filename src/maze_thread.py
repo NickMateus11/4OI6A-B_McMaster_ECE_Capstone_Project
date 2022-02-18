@@ -13,10 +13,12 @@ class MazeThread:
 		self.wall_size = 4  # hard coded
 		self.sensitivity = 0.85
 		self.video_stream = video_stream
-		img_name = "../images/maze_ball_trim.png"
-		self.img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
-		self.img = cv2.resize(self.img, (320, 240))
-		cv2.imwrite("imput.png", self.img)
+		
+		# img_name = "../images/maze_ball_trim.png"
+		# self.img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
+		# self.img = cv2.resize(self.img, (320, 240))
+		# cv2.imwrite("imput.png", self.img)
+
 		self.maze = None
 		self.stopped = False
 
@@ -31,10 +33,10 @@ class MazeThread:
 		# keep looping infinitely until the thread is stopped
 		while (True):
 			# grab the frame from the stream
-			# img = self.video_stream.read()
-			img = self.img
+			img = self.video_stream.read()
+			# img = self.img
 			if img is not None:
-				# img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 				new_maze, _ = maze_compression(img, (self.y_grids, self.x_grids), self.wall_size, 
 									self.sensitivity, preprocess={'thresh':30, 'blur':5, 'adaptive':False})
 				self.maze = new_maze
