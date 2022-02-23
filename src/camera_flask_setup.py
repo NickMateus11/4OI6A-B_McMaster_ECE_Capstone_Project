@@ -5,9 +5,13 @@ import time
 import numpy as np
 
 class VideoCamera(object):
-    def __init__(self, flip=False):
-        self.vs = PiVideoStream().start()
+    def __init__(self, resolution=(320,240), sensor_mode=0, flip=False):
+        self.vs = PiVideoStream(resolution=resolution, 
+                                sensor_mode=sensor_mode)
+        self.w, self.h = resolution
         self.flip = flip
+        
+        self.vs.start()
         time.sleep(2.0)
 
     def __del__(self):

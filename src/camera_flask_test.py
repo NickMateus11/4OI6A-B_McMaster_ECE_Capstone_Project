@@ -3,15 +3,18 @@ from camera_flask_setup import VideoCamera
 import time
 import threading
 import os
+import json
 
-pi_camera = VideoCamera()
+mode = 1
+resolution = (320, 240)
+pi_camera = VideoCamera(resolution, sensor_mode=mode)
 
-# App Globals (do not edit)
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    data = {'v_width':pi_camera.w, 'v_height':pi_camera.h}
+    return render_template('index.html', data=data) #you can customze index.html here
 
 def gen(camera):
     #get camera frame
@@ -25,6 +28,10 @@ def video_feed():
     return Response(gen(pi_camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-if __name__ == '__main__':
+@app.route('/print_hello')
+def print_hello():
+    print("Hello")
+    return json.dumps({"success": True}), 200
 
-    app.run(host='0.0.0.0', debug=False)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
