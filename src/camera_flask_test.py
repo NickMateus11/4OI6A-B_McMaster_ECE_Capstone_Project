@@ -37,6 +37,11 @@ def print_hello():
     print("Hello")
     return json.dumps({"success": True}), 200
 
+@app.route('/print_test')
+def print_test():
+    print("Hello")
+    return json.dumps({"success": True}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available

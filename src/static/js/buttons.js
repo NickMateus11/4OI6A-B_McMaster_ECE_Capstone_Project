@@ -10,3 +10,13 @@ $(function() {
         return false;
     });
 });
+
+$(function() {
+    $('#STOP').bind('click', function() {
+        $.getJSON('/print_test',
+            function(data) {
+        //do nothing
+        });
+        return false;
+    });
+});
