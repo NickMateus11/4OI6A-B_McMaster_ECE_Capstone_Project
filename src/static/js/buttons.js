@@ -16,3 +16,36 @@ $('#STOP').bind('click', function() {
     });
     return false;
 });
+
+$('#UP').bind('click', function() {
+    $.getJSON('/up',
+        function(data) {
+    //do nothing
+    });
+    return false;
+});
+
+$('#DOWN').bind('click', function() {
+    $.getJSON('/down',
+        function(data) {
+    //do nothing
+    });
+    return false;
+});
+
+
+$('#LEFT').bind('click', function() {
+    $.getJSON('/left',
+        function(data) {
+    //do nothing
+    });
+    return false;
+});
+
+$('#RIGHT').bind('click', function() {
+    $.getJSON('/right',
+        function(data) {
+    //do nothing
+    });
+    return false;
+});

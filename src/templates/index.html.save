@@ -13,14 +13,11 @@
         <a href=# id=START><button>START</button></a>
         <a href=# id=STOP><button>STOP</button></a>
     </form></center>
-    <center>
-        <a href=# id=UP><button>UP</button></a>
-        <a href=# id=DOWN><button>DOWN</button></a>
-        <a href=# id=LEFT><button>LEFT</button></a>
-        <a href=# id=RIGHT><button>RIGHT</button></a>
-    </center>
-    </div>
-  </body>
+    <center><a href=# id=UP><button>UP</button></a>
+    <center><a href=# id=UP><button>UP</button></a>
+    <center><a href=# id=UP><button>UP</button></a>
+    <center><a href=# id=UP><button>UP</button></a>
+      </body>
 
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/buttons.js') }}"></script>

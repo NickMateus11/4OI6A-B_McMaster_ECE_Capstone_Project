@@ -4,6 +4,17 @@ import time
 import threading
 import os
 import json
+from gpiozero import Servo
+import pigpio
+
+servo1 = 25
+servo2 = 24
+
+pwm = pigpio.pi()
+pwm.set_mode(servo1,pigpio.OUTPUT)
+pwm.set_PWM_frequency(servo1,50)
+pwm.set_mode(servo2,pigpio.OUTPUT)
+pwm.set_PWM_frequency(servo2,50)
 
 # Camera Setup
 mode = 1
@@ -34,14 +45,41 @@ def video_feed():
 
 @app.route('/print_hello')
 def print_hello():
-    print("Hello")
+    print("Start")
     return json.dumps({"success": True}), 200
 
 @app.route('/print_test')
 def print_test():
-    print("Hello")
+    print("Stop")
     return json.dumps({"success": True}), 200
 
+@app.route('/up')
+def up():
+    print("up")
+    print("0 deg")
+    pwm.set_servo_pulsewidth(servo1,2000)
+    return json.dumps({"success": True}), 200
+
+@app.route('/down')
+def down():
+    print("down")
+    print("90 deg")
+    pwm.set_servo_pulsewidth(servo1,500)
+    return json.dumps({"success": True}), 200
+
+@app.route('/left')
+def left():
+    print("left")
+    print("90 deg")
+    pwm.set_servo_pulsewidth(servo2,500)    
+    return json.dumps({"success": True}), 200
+
+@app.route('/right')
+def right():
+    print("right")
+    print("0 deg")
+    pwm.set_servo_pulsewidth(servo2,1000)
+    return json.dumps({"success": True}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
