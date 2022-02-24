@@ -7,14 +7,17 @@ import json
 from gpiozero import Servo
 import pigpio
 
-servo1 = 25
-servo2 = 24
+
+SERVO_PIN_1 = 25
+SERVO_PIN_2 = 24
 
 pwm = pigpio.pi()
-pwm.set_mode(servo1,pigpio.OUTPUT)
-pwm.set_PWM_frequency(servo1,50)
-pwm.set_mode(servo2,pigpio.OUTPUT)
-pwm.set_PWM_frequency(servo2,50)
+
+pwm.set_mode(SERVO_PIN_1,pigpio.OUTPUT)
+pwm.set_PWM_frequency(SERVO_PIN_1,50)
+
+pwm.set_mode(SERVO_PIN_2,pigpio.OUTPUT)
+pwm.set_PWM_frequency(SERVO_PIN_2,50)
 
 # Camera Setup
 mode = 1
@@ -35,8 +38,11 @@ def frame_gen(camera):
 
 @app.route('/')
 def index():
-    data = {'v_width':pi_camera.w, 'v_height':pi_camera.h}
-    return render_template('index.html', data=data) #you can customze index.html here
+    data = {
+        'v_width':pi_camera.w, 
+        'v_height':pi_camera.h
+        }
+    return render_template('index.html', **data) #you can customze index.html here
 
 @app.route('/video_feed')
 def video_feed():
@@ -57,28 +63,28 @@ def print_test():
 def up():
     print("up")
     print("0 deg")
-    pwm.set_servo_pulsewidth(servo1,2000)
+    pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
     return json.dumps({"success": True}), 200
 
 @app.route('/down')
 def down():
     print("down")
     print("90 deg")
-    pwm.set_servo_pulsewidth(servo1,500)
+    pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
     return json.dumps({"success": True}), 200
 
 @app.route('/left')
 def left():
     print("left")
     print("90 deg")
-    pwm.set_servo_pulsewidth(servo2,500)    
+    pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
     return json.dumps({"success": True}), 200
 
 @app.route('/right')
 def right():
     print("right")
     print("0 deg")
-    pwm.set_servo_pulsewidth(servo2,1000)
+    pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
     return json.dumps({"success": True}), 200
 
 if __name__ == '__main__':
