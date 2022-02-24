@@ -72,5 +72,5 @@ def undistort(img_path, K, D):
 
 
 if __name__ == '__main__':
-    K, D, _ = calib(glob.glob("../images/calibration/*.png"), CHECKERBOARD)
-    undistort("../images/calibration/pic_5.png", K, D)
+    K, D, _ = calib(glob.glob("../images/calibration/pic_*.png"), CHECKERBOARD)
+    undistort("../images/calibration/distorted.png", K, D)

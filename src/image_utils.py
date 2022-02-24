@@ -1,5 +1,5 @@
 import numpy as np
-# from scipy import stats
+from scipy import stats
 import cv2
 
 
@@ -42,26 +42,26 @@ def trim_file(filename):
             f.write('\n')
 
 
-def trim(arr):
+def trim_maze_edge(arr):
     pass
-    # start_row = 0
-    # while 0 not in arr[start_row]:
-    #     start_row += 1
+    start_row = 0
+    while 0 not in arr[start_row]:
+        start_row += 1
 
-    # end_row = len(arr)-1
-    # while end_row > start_row and 0 not in arr[end_row]:
-    #     end_row -= 1
+    end_row = len(arr)-1
+    while end_row > start_row and 0 not in arr[end_row]:
+        end_row -= 1
 
-    # start_cols = []
-    # end_cols = []
-    # for i in range(start_row, end_row+1):
-    #     try:
-    #         bounds = np.where(arr[i] == 0)[0]
-    #         start_cols.append(bounds[0])
-    #         end_cols.append(bounds[-1])
-    #     except: continue
-    # start_col = stats.mode(start_cols).mode[0]
-    # end_col =  stats.mode(end_cols).mode[0]
+    start_cols = []
+    end_cols = []
+    for i in range(start_row, end_row+1):
+        try:
+            bounds = np.where(arr[i] == 0)[0]
+            start_cols.append(bounds[0])
+            end_cols.append(bounds[-1])
+        except: continue
+    start_col = stats.mode(start_cols).mode[0]
+    end_col =  stats.mode(end_cols).mode[0]
 
-    # trimmed_arr = arr[start_row:end_row+1, start_col:end_col+1]
-    # return trimmed_arr
+    trimmed_arr = arr[start_row:end_row+1, start_col:end_col+1]
+    return trimmed_arr

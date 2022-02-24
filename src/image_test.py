@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from image_utils import trim, draw_grid
+from image_utils import trim_maze_edge, draw_grid
 
 
 def find_walls(arr, row, col, cell_size_y, cell_size_x, wall_size, sensitivity):
@@ -55,7 +55,7 @@ def maze_compression(img, grid_size, wall_size, sensitivity, preprocess=None, tr
 
     # TODO: remove trimming - doesn't work well with real-world images
     if trim:
-        trimmed_maze = trim(img) // 255  # trim and normalize to 0s and 1s
+        trimmed_maze = trim_maze_edge(img) // 255  # trim and normalize to 0s and 1s
     else: 
         trimmed_maze = img // 255
     y_dim, x_dim = trimmed_maze.shape[:2]
@@ -113,10 +113,10 @@ if __name__ == '__main__':
 
     sensitivity = 0.53
 
-    img_name = "./images/maze_ball_trim.png"
+    img_name = "./images/maze_uncropped.png"
     img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
 
-    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), wall_size, sensitivity, 
+    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), wall_size, sensitivity, trim=True,
                         preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
 
     draw_grid(reference_maze, y_grids, x_grids)
