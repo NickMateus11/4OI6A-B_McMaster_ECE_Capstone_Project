@@ -1,5 +1,5 @@
 
-// Script to handle button POSTs
+// Script to handle button presses WITHOUT redirection
 
 $('#START').bind('click', function() {
     $.getJSON('/print_hello',
@@ -49,3 +49,12 @@ $('#RIGHT').bind('click', function() {
     });
     return false;
 });
+
+//// Must allow redirect for file to download 
+// $('#CAPTURE').bind('click', function() {
+//     $.getJSON('/capture',
+//         function(data) {
+//     //do nothing
+//     });
+//     return false;
+// });
