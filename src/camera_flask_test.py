@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response, request, send_file
 from camera_flask_setup import VideoCamera
 import time
 import threading
@@ -6,21 +6,22 @@ import os
 import json
 from gpiozero import Servo
 import pigpio
+import cv2
 
 
 SERVO_PIN_1 = 25
 SERVO_PIN_2 = 24
 
-pwm = pigpio.pi()
+# pwm = pigpio.pi()
 
-pwm.set_mode(SERVO_PIN_1,pigpio.OUTPUT)
-pwm.set_PWM_frequency(SERVO_PIN_1,50)
+# pwm.set_mode(SERVO_PIN_1,pigpio.OUTPUT)
+# pwm.set_PWM_frequency(SERVO_PIN_1,50)
 
-pwm.set_mode(SERVO_PIN_2,pigpio.OUTPUT)
-pwm.set_PWM_frequency(SERVO_PIN_2,50)
+# pwm.set_mode(SERVO_PIN_2,pigpio.OUTPUT)
+# pwm.set_PWM_frequency(SERVO_PIN_2,50)
 
 # Camera Setup
-mode = 1
+mode = 0
 resolution = (320, 240)
 pi_camera = VideoCamera(resolution, sensor_mode=mode)
 
@@ -59,33 +60,43 @@ def print_test():
     print("Stop")
     return json.dumps({"success": True}), 200
 
-@app.route('/up')
-def up():
-    print("up")
-    print("0 deg")
-    pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
-    return json.dumps({"success": True}), 200
+captures = 0
+@app.route('/capture')
+def capture():
+    global captures
+    filename = f"pic_{captures}.png"
+    # captures+=1
+    print(f"Saving Picture {filename}")
+    cv2.imwrite(filename, pi_camera.vs.read())
+    return send_file(filename, as_attachment=True)
 
-@app.route('/down')
-def down():
-    print("down")
-    print("90 deg")
-    pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
-    return json.dumps({"success": True}), 200
+# @app.route('/up')
+# def up():
+#     print("up")
+#     print("0 deg")
+#     pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
+#     return json.dumps({"success": True}), 200
 
-@app.route('/left')
-def left():
-    print("left")
-    print("90 deg")
-    pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
-    return json.dumps({"success": True}), 200
+# @app.route('/down')
+# def down():
+#     print("down")
+#     print("90 deg")
+#     pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
+#     return json.dumps({"success": True}), 200
 
-@app.route('/right')
-def right():
-    print("right")
-    print("0 deg")
-    pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
-    return json.dumps({"success": True}), 200
+# @app.route('/left')
+# def left():
+#     print("left")
+#     print("90 deg")
+#     pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
+#     return json.dumps({"success": True}), 200
+
+# @app.route('/right')
+# def right():
+#     print("right")
+#     print("0 deg")
+#     pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
+#     return json.dumps({"success": True}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
