@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import stats
+import statistics
 import cv2
 
 
@@ -60,8 +60,8 @@ def trim_maze_edge(arr):
             start_cols.append(bounds[0])
             end_cols.append(bounds[-1])
         except: continue
-    start_col = stats.mode(start_cols).mode[0]
-    end_col =  stats.mode(end_cols).mode[0]
+    start_col = statistics.mode(start_cols)
+    end_col =  statistics.mode(end_cols)
 
     trimmed_arr = arr[start_row:end_row+1, start_col:end_col+1]
     return trimmed_arr
