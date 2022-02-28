@@ -61,7 +61,12 @@ def calib(images, internal_corners):
     return K, D, _img_shape[::-1]
 
 
-def undistort(img_path, K, D, DIM):
+def undistort(img, K, D, DIM):
+    map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, np.eye(3), K, DIM, cv2.CV_16SC2)
+    undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+    return undistorted_img
+
+def undistort_img_path(img_path, K, D, DIM):
     img = cv2.imread(img_path)
     map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, np.eye(3), K, DIM, cv2.CV_16SC2)
     undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)

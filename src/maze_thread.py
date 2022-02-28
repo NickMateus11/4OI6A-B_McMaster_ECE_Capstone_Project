@@ -3,10 +3,10 @@ import cv2
 import numpy as np
 from image_test import maze_compression
 from threading import Thread
-from pivideostream import PiVideoStream
+from camera_flask_setup import VideoCamera
 
 class MazeThread:
-	def __init__(self, video_stream:PiVideoStream):
+	def __init__(self, video_stream:VideoCamera):
 		self.count = 0
 		self.x_grids = 8
 		self.y_grids = 8
@@ -33,7 +33,7 @@ class MazeThread:
 		# keep looping infinitely until the thread is stopped
 		while (True):
 			# grab the frame from the stream
-			img = self.video_stream.read()
+			img = self.video_stream.get_frame()
 			# img = self.img
 			if img is not None:
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -49,6 +49,14 @@ class MazeThread:
 	def read(self):
 		# return the frame most recently read
 		return self.maze
+	
+	def get_frame(self):
+		upscaled_maze = cv2.resize(
+				self.read()*255, 
+				(self.video_stream.w, self.video_stream.h), 
+				interpolation=cv2.INTER_NEAREST
+			)		
+		return upscaled_maze
 
 	def stop(self):
 		# indicate that the thread should be stopped
