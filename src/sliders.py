@@ -42,11 +42,11 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
 
     # TODO: use the preprocess features more
     (cmpr_img, ref_maze) = maze_compression(imageCopy, (y_cell, x_cell), 4, sens_val, 
-                        trim=True,
+                        trim=False,
                         preprocess={
                             'thresh':thresh_val, 
                             "blur":blur_val, 
-                            "resize":5, 
+                            "resize":1, 
                             "block":block_val,
                             "c":c_val, 
                             "adaptive": False
@@ -55,7 +55,7 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
     cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
     # bin_img = cv2.resize(bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
 
-    draw_grid(ref_maze, y_cell, x_cell)
+    draw_grid(ref_maze, y_cell, x_cell, 1)
 
     final_frame = cv2.hconcat((cmpr_img, ref_maze))
     upscaled = cv2.resize(final_frame, (x//2 * 2, y//2), interpolation=cv2.INTER_NEAREST)
@@ -70,11 +70,12 @@ resize_required = True
 x_cell = 8
 y_cell = 8
 
-img = cv2.imread('./images/maze_uncropped.png')  # input
+img = cv2.imread('./images/test.png')  # input
 y,x,_ = img.shape
 #resize if too big
-y=y//2
-x=x//2
+scale = 0.25
+y=int(y//scale)
+x=int(x//scale)
 
 # img = cv2.resize(img, (200, 100))
 
