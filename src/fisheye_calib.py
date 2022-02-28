@@ -1,11 +1,9 @@
 import cv2
 import numpy as np
-import os
 import glob
-import sys
 
 
-CHECKERBOARD = (5,7) #internal corners
+CHECKERBOARD = (5, 7) # internal corners (h, w)
 
 
 def calib(images, internal_corners):
@@ -94,6 +92,6 @@ def undistort2(img_path, K, D, DIM,balance=0.0, dim2=None, dim3=None):
 
 
 if __name__ == '__main__':
-    K, D, DIM = calib(glob.glob("../images/calibration/pic_*.png"), CHECKERBOARD)
-    undistort("../images/calibration/distorted.png", K, D, DIM)
-    undistort2("../images/calibration/distorted.png", K, D, DIM)
+    K, D, DIM = calib(glob.glob("../images/calibration/pic*.png"), CHECKERBOARD)
+    undistort_img_path("../images/calibration/pic_distorted.png", K, D, DIM)
+    undistort2("../images/calibration/pic_distorted.png", K, D, DIM)

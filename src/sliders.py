@@ -49,7 +49,7 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
                             "resize":1, 
                             "block":block_val,
                             "c":c_val, 
-                            "adaptive": False
+                            "adaptive": True
                         }) 
 
     cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
@@ -70,7 +70,7 @@ resize_required = True
 x_cell = 8
 y_cell = 8
 
-img = cv2.imread('./images/test.png')  # input
+img = cv2.imread('./images/test3.png')  # input
 y,x,_ = img.shape
 #resize if too big
 scale = 0.25
