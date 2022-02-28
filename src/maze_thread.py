@@ -33,7 +33,7 @@ class MazeThread:
 		# keep looping infinitely until the thread is stopped
 		while (True):
 			# grab the frame from the stream
-			img = self.video_stream.get_frame()
+			img = self.video_stream.get_frame(fisheye_correction=True, crop_dim=(240, 240))
 			# img = self.img
 			if img is not None:
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

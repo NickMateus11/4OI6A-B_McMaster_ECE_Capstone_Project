@@ -30,10 +30,10 @@ pi_camera = VideoCamera(resolution, sensor_mode=mode)
 # Flask App
 app = Flask(__name__, static_folder="static")
 
-def frame_gen(feed):
+def frame_gen(feed, kwargs={}):
     #get camera frame
     while True:
-        frame = feed.get_frame()
+        frame = feed.get_frame(**kwargs)
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
@@ -43,14 +43,15 @@ def frame_gen(feed):
 @app.route('/')
 def index():
     data = {
-        'v_width':pi_camera.w, 
-        'v_height':pi_camera.h
+        'v_width':min(pi_camera.h, pi_camera.w), 
+        'v_height':min(pi_camera.h, pi_camera.w)
         }
     return render_template('index.html', **data) #you can customze index.html here
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(frame_gen(pi_camera),
+    kwargs = {"fisheye_correction": True, "crop_dim":(240, 240)}
+    return Response(frame_gen(pi_camera, kwargs),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/maze_feed')
@@ -72,7 +73,9 @@ def print_test():
 def capture():
     filename = "pic_temp.png"
     print(f"Saving Picture {filename}")
-    cv2.imwrite(filename, pi_camera.vs.read())
+    kwargs = {"fisheye_correction": True, "crop_dim":(240, 240)}
+    img = pi_camera.get_frame(**kwargs)
+    cv2.imwrite(filename, img)
     return send_file(filename, as_attachment=True)
 
 # @app.route('/up')
