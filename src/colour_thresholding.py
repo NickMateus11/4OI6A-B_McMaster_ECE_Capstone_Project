@@ -42,7 +42,7 @@ grid_size = (8,8)
 frame, (x,y) = locate_ball(frame)
 
 # generate compressed maze
-maze, ref_img = maze_compression(frame_gray, grid_size, 4, 0.53, preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
+maze, ref_img = maze_compression(frame_gray, grid_size, 0.53, preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
 maze = cv2.cvtColor(maze*255, cv2.COLOR_GRAY2BGR)
 
 # mark the location of the ball

@@ -37,7 +37,7 @@ class MazeThread:
 			# img = self.img
 			if img is not None:
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-				new_maze, _ = maze_compression(img, (self.y_grids, self.x_grids), self.wall_size, 
+				new_maze, _ = maze_compression(img, (self.y_grids, self.x_grids), 
 									self.sensitivity, preprocess={'thresh':30, 'blur':5, 'adaptive':False})
 				self.maze = new_maze
 				self.count += 1

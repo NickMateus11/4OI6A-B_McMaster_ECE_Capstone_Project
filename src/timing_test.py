@@ -19,7 +19,7 @@ if __name__ == '__main__':
     img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
 
     for _ in range(iters):
-        new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), wall_size, sensitivity, 
+        new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), sensitivity, 
                             preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
 
     maze_compressed = cv2.resize(

@@ -74,7 +74,7 @@ def main():
     image_name = "./images/maze5.jpg"
     image_name = "./images/maze_ball_trim.png"
     img = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)  # input
-    maze, ref_img = maze_compression(img, (grid_y, grid_x), 4, 0.83, preprocess={'thresh': 55, 'blur':15, 'resize':2})
+    maze, ref_img = maze_compression(img, (grid_y, grid_x), 0.83, preprocess={'thresh': 55, 'blur':15, 'resize':2})
 
     image = cv2.cvtColor(maze*255, cv2.COLOR_GRAY2BGR)
     image = cv2.resize(image, (ref_img.shape[1],ref_img.shape[0]), interpolation=cv2.INTER_NEAREST)
