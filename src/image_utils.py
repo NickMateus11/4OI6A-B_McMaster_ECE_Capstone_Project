@@ -3,18 +3,18 @@ import statistics
 import cv2
 
 
-def draw_grid(img, rows, cols, thickness=1):
+def draw_grid(img, rows, cols, thickness=1, x_offset=0, y_offset=0):
     h, w = img.shape[0], img.shape[1]
 
     # draw vertical lines
-    for x in np.linspace(start=0, stop=w, num=cols+1):
+    for x in np.linspace(start=0+x_offset, stop=w-x_offset, num=cols+1):
         x = int(round(x))
-        cv2.line(img, (x, 0), (x, h), color=(128,)*3, thickness=thickness)
+        cv2.line(img, (x, 0+y_offset), (x, h-y_offset), color=(128,)*3, thickness=thickness)
 
     # draw horizontal lines
-    for y in np.linspace(start=0, stop=h, num=rows+1):
+    for y in np.linspace(start=0+y_offset, stop=h-y_offset, num=rows+1):
         y = int(round(y))
-        cv2.line(img, (0, y), (w, y), color=(128,)*3, thickness=thickness)
+        cv2.line(img, (0+x_offset, y), (w-x_offset, y), color=(128,)*3, thickness=thickness)
 
 
 def trim_file(filename):
