@@ -11,7 +11,6 @@ class VideoCamera(object):
                                 sensor_mode=sensor_mode)
         self.w, self.h = resolution
         self.flip = flip
-        self.latest_frame = None
 
         # Fisheye Params
         self.fisheye_correction = correction
@@ -27,11 +26,6 @@ class VideoCamera(object):
     def __del__(self):
         self.vs.stop()
 
-    # def flip_if_needed(self, frame):
-    #     if self.flip:
-    #         return np.flip(frame, 0)
-    #     return frame
-
     def get_latest_frame(self, crop_region=None):
         frame = self.vs.read()
         
@@ -44,6 +38,5 @@ class VideoCamera(object):
             frame = frame[0+crop_amount_h//2: self.h-crop_amount_h//2,
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
         
-        self.latest_frame = frame
-        return self.latest_frame
+        return frame
 
