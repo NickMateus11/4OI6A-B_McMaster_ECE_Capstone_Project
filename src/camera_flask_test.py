@@ -6,6 +6,7 @@ import os
 import json
 from gpiozero import Servo
 import pigpio
+import io
 import cv2
 
 from maze_thread import MazeThread 
@@ -83,9 +84,9 @@ def print_test():
 def capture():
     print(f"Saving Picture")
     img = pi_camera.get_latest_frame()
-    _, im_buf_arr = cv2.imencode(".jpg", img)
-    byte_img = im_buf_arr.tobytes()
-    return send_file(byte_img, as_attachment=True)
+    res, im_buf_arr = cv2.imencode(".jpg", img)
+    bytes_img = io.BytesIO(im_buf_arr.tobytes())
+    return send_file(bytes_img, as_attachment=True, download_name="pi_camera_capture.jpg")
 
 # @app.route('/up')
 # def up():
