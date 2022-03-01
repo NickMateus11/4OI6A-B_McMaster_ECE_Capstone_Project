@@ -34,6 +34,7 @@ def frame_gen():
         frame = pi_camera.get_latest_frame()
         h,w = frame.shape[:2]
 
+        # draw crop region with red outline - don't actually crop
         crop_region = (240, 240)
         crop_amount_w = w - crop_region[0] 
         crop_amount_h = h - crop_region[1]
@@ -80,11 +81,11 @@ def print_test():
 
 @app.route('/capture')
 def capture():
-    filename = "pic_temp.png"
-    print(f"Saving Picture {filename}")
+    print(f"Saving Picture")
     img = pi_camera.get_latest_frame()
-    cv2.imwrite(filename, img)
-    return send_file(filename, as_attachment=True)
+    _, im_buf_arr = cv2.imencode(".jpg", img)
+    byte_img = im_buf_arr.tobytes()
+    return send_file(byte_img, as_attachment=True)
 
 # @app.route('/up')
 # def up():
