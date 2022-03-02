@@ -9,8 +9,8 @@ def find_walls(arr, row, col, cell_size_y, cell_size_x, sensitivity):
     col_right = int(col+cell_size_x)
     row_top = int(row)
     row_bottom = int(row+cell_size_y)
-    check_offset_width = int(max(min(cell_size_x, cell_size_y) / 3, 1))
-    check_offset_depth = int(max(min(cell_size_x, cell_size_y) / 4, 1))
+    check_offset_width = int(max(min(cell_size_x, cell_size_y) / 4, 1))
+    check_offset_depth = int(max(min(cell_size_x, cell_size_y) / 3, 1))
     c_x = int(cell_size_x//2)
     c_y = int(cell_size_y//2)
 

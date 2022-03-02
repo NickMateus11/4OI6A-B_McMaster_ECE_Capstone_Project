@@ -49,7 +49,7 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
                             "resize":1, 
                             "block":block_val,
                             "c":c_val, 
-                            "adaptive": False
+                            "adaptive": True
                         }) 
 
     cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
@@ -65,8 +65,8 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
     row_top  = int(7 * cell_size_y)
     col_right = int(col_left+cell_size_x)
     row_bottom = int(row_top+cell_size_y)
-    check_offset_width = int(max(min(cell_size_x, cell_size_y) / 3, 1))
-    check_offset_depth = int(max(min(cell_size_x, cell_size_y) / 4, 1))
+    check_offset_width = int(max(min(cell_size_x, cell_size_y) / 4, 1))
+    check_offset_depth = int(max(min(cell_size_x, cell_size_y) / 3, 1))
 
     ref_maze = cv2.cvtColor(ref_maze, cv2.COLOR_GRAY2BGR)
     cmpr_img = cv2.cvtColor(cmpr_img, cv2.COLOR_GRAY2BGR)
