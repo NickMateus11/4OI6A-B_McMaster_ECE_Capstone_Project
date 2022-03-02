@@ -10,7 +10,7 @@ def threshchange(val):
 
 def blurchange(val):
     global blur
-    blur = val if val>0 else 1
+    blur = val if val%2 else val+1
     imgchange(thresh, blur, sens, block, c)
 
 def senschange(val):
@@ -103,8 +103,8 @@ y_cell = 8
 img = cv2.imread('./images/pi_camera_capture.jpg')  # input
 y,x,_ = img.shape
 #resize if too big
-# scale = 0.25
-scale = 1
+scale = 0.25
+# scale = 1
 y=int(y//scale)
 x=int(x//scale)
 
