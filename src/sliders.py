@@ -15,17 +15,17 @@ def blurchange(val):
 
 def senschange(val):
     global sens
-    sens = val/100.0
+    sens = val/100
     imgchange(thresh, blur, sens, block, c)
 
 def blockchange(val):
     global block
-    block = val*2 + 1 if val>0 else 3
+    block = val if val%2 else val+1 if val>1 else 3
     imgchange(thresh, blur, sens, block, c)
 
 def cchange(val):
     global c
-    c = val/100.0
+    c = val
     imgchange(thresh, blur, sens, block, c)
 
 def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
@@ -97,14 +97,14 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
 # blur
 # sensitivity
 
-resize_required = True
 x_cell = 8
 y_cell = 8
 
-img = cv2.imread('./images/test4.png')  # input
+img = cv2.imread('./images/pi_camera_capture.jpg')  # input
 y,x,_ = img.shape
 #resize if too big
-scale = 0.25
+# scale = 0.25
+scale = 1
 y=int(y//scale)
 x=int(x//scale)
 
@@ -117,19 +117,19 @@ img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # img = cv2.inRange(frame_HSV, (0, 0, 73), (360, 21, 255))
 
 thresh = 150
-blur = 15
-sens = 0.83
-block = 11
-c = 2
+blur = 3
+sens = 0.80
+block = 43
+c = 14
 
 windowName = 'image'
 
 imgchange(thresh, blur, sens, block, c)
-cv2.createTrackbar('Blur', windowName, 15, 100, blurchange)
-cv2.createTrackbar('Threshold', windowName, 150, 255, threshchange)
-cv2.createTrackbar('Sens', windowName, 83, 100, senschange)
-cv2.createTrackbar('Block', windowName, 11, 1023, blockchange)
-cv2.createTrackbar('C', windowName, 2, 4095, cchange)
+cv2.createTrackbar('Blur', windowName, blur, 100, blurchange)
+cv2.createTrackbar('Threshold', windowName, thresh, 255, threshchange)
+cv2.createTrackbar('Sens', windowName, int(sens*100), 100, senschange)
+cv2.createTrackbar('Block', windowName, block, 1023, blockchange)
+cv2.createTrackbar('C', windowName, c, 100, cchange)
 
 
 cv2.waitKey(0)

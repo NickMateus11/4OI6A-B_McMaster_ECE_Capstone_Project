@@ -111,15 +111,15 @@ def maze_compression(img, grid_size, sensitivity, preprocess=None, trim=False):
 if __name__ == '__main__':
     x_grids = 8
     y_grids = 8
-    wall_size = 4  # hard coded
 
-    sensitivity = 0.53
+    sensitivity = 0.80
 
-    img_name = "./images/maze_uncropped.png"
-    img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
+    img_name = "./images/pi_camera_capture.jpg"
+    img = cv2.imread(img_name)  # input
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), sensitivity, trim=True,
-                        preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
+    new_maze, reference_maze = maze_compression(img, (y_grids, x_grids), sensitivity,
+                        preprocess={'block': 45, 'blur':3, 'resize':1, 'adaptive':True, 'c':18})
 
     draw_grid(reference_maze, y_grids, x_grids)
     cv2.imshow('image', reference_maze)
@@ -132,3 +132,4 @@ if __name__ == '__main__':
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    # cv2.imwrite("test.png", reference_maze)
