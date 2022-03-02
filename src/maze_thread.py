@@ -12,10 +12,14 @@ class MazeThread:
 		self.x_grids = 8
 		self.y_grids = 8
 		self.wall_size = 4  # hard coded
-		self.sensitivity = 0.85
+		self.sensitivity = 0.8
 		self.threshold = 30
-		self.blur = 5
-		self.adaptive_thresh = False
+		self.blur = 3
+		self.adaptive_thresh = True
+		self.block = 45
+		self.c = 18
+
+		self.crop_region = (240, 240)
 		
 		self.video_stream = video_stream
 		
@@ -41,7 +45,7 @@ class MazeThread:
 		# keep looping infinitely until the thread is stopped
 		while (True):
 			# grab the frame from the stream
-			img = self.video_stream.get_latest_frame(crop_region=(240,240))
+			img = self.video_stream.get_latest_frame(crop_region=self.crop_region)
 			# img = self.img
 			if img is not None:
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -52,6 +56,9 @@ class MazeThread:
 					preprocess={
 						'thresh':self.threshold, 
 						'blur':self.blur, 
+						"resize":1, 
+						"block":self.block,
+						"c":self.c, 
 						'adaptive':self.adaptive_thresh
 					})
 				self.maze = new_maze
@@ -67,13 +74,13 @@ class MazeThread:
 	def read_latest(self):
 		return self.maze.copy()
 	
-	def get_maze_as_scaled_image(self):
+	def get_scaled_maze(self):
 		upscaled_maze = cv2.resize(
 				self.read_latest()*255, 
 				(self.video_stream.w, self.video_stream.h), 
 				interpolation=cv2.INTER_NEAREST
 			)		
-		return upscaled_maze.copy()
+		return upscaled_maze
 
 	def get_ref_image(self):
 		return self.ref_maze.copy()
