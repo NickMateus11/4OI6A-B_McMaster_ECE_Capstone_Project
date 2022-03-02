@@ -40,13 +40,12 @@ def frame_gen():
         crop_amount_w = w - crop_region[0] 
         crop_amount_h = h - crop_region[1]
 
-        draw_grid(frame, 8,8, x_offset=crop_amount_w//2, y_offset=crop_amount_h//2)
+        grid_size = (8,8) # x,y
+        grid_y = grid_size[1]
+        grid_x = grid_size[0]
+        draw_grid(frame, grid_y, grid_x, x_offset=crop_amount_w//2, y_offset=crop_amount_h//2)
 
-        frame = cv2.rectangle(
-            frame, 
-            (crop_amount_w//2+1, crop_amount_h//2+1), 
-            (w-crop_amount_w//2-1, h-crop_amount_h//2-1), 
-            (0,0,255), 2)
+        cv2.rectangle(frame, (crop_amount_w//2+1, crop_amount_h//2+1), (w-crop_amount_w//2-1, h-crop_amount_h//2-1), (0,0,255), 2)
 
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
@@ -56,7 +55,7 @@ def frame_gen():
 def maze_gen():
     #get maze frame
     while True:
-        frame = maze_thread.get_maze_as_scaled_image()
+        frame = maze_thread.get_scaled_maze()
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
@@ -140,7 +139,7 @@ if __name__ == '__main__':
     # Camera Setup
     mode = 0
     resolution = (320, 240)
-    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=False) # in a thread
+    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=True) # in a thread
 
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread
