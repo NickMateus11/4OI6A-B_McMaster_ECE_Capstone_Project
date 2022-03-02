@@ -65,7 +65,7 @@ class MazeThread:
 			# time.sleep(0.1) # maze computes faster than necessary - TODO: synchronize this better
 
 	def read_latest(self):
-		return self.maze
+		return self.maze.copy()
 	
 	def get_maze_as_scaled_image(self):
 		upscaled_maze = cv2.resize(
@@ -73,10 +73,10 @@ class MazeThread:
 				(self.video_stream.w, self.video_stream.h), 
 				interpolation=cv2.INTER_NEAREST
 			)		
-		return upscaled_maze
+		return upscaled_maze.copy()
 
 	def get_ref_image(self):
-		return self.ref_maze; 
+		return self.ref_maze.copy()
 
 	def stop(self):
 		self.stopped = True

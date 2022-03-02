@@ -38,5 +38,5 @@ class VideoCamera(object):
             frame = frame[0+crop_amount_h//2: self.h-crop_amount_h//2,
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
         
-        return frame
+        return frame.copy()
 
