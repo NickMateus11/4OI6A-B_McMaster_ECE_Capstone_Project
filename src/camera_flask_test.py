@@ -21,12 +21,31 @@ SERVO_PIN_2 = 24
 app = Flask(__name__, static_folder="static")
 
 ### Flask Routes ###
-@app.route('/')
+@app.route('/',methods=('GET','POST'))
 def index():
     template_data = {
-        'v_width':pi_camera.w, 
-        'v_height':pi_camera.h
-        }
+	'v_width':pi_camera.w, 
+        'v_height':pi_camera.h,
+	'setting_blur':maze_thread.blur,
+	'setting_thresh':maze_thread.threshold,
+	'setting_sens':maze_thread.sensitivity*100
+	}
+    if request.method=='POST':
+        blur = int(request.form['blur'])
+        thresh = int(request.form['thresh'])
+        sens = float(int(request.form['sens'])/100)
+        print("Blur:",blur)
+        print("Thresh:",thresh)
+        print("Sens:",sens)
+        maze_thread.blur = blur
+        maze_thread.threshold = thresh
+        maze_thread.sensitivity = sens
+        template_data = {
+            'v_width':pi_camera.w, 
+            'v_height':pi_camera.h,
+            'setting_blur': blur,       
+            'setting_thresh':thresh,
+            'setting_sens': sens*100 }
     return render_template('index.html', **template_data)
 
 def frame_gen():
@@ -100,6 +119,7 @@ def capture():
     res, im_buf_arr = cv2.imencode(".jpg", img)
     bytes_img = io.BytesIO(im_buf_arr.tobytes())
     return send_file(bytes_img, as_attachment=True, download_name="pi_camera_capture.jpg")
+
 
 # @app.route('/up')
 # def up():
