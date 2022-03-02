@@ -62,6 +62,15 @@ def maze_gen():
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 
 
+def ref_gen():
+    #get ref frame
+    while True:
+        frame = maze_thread.get_ref_image()
+        _, jpeg = cv2.imencode('.jpg', frame)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+
+
 @app.route('/video_feed')
 def video_feed():
     return Response(frame_gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -69,6 +78,10 @@ def video_feed():
 @app.route('/maze_feed')
 def maze_feed():
     return Response(maze_gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/ref_feed')
+def ref_feed():
+    return Response(ref_gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/print_hello')
 def print_hello():
@@ -127,7 +140,7 @@ if __name__ == '__main__':
     # Camera Setup
     mode = 0
     resolution = (320, 240)
-    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=True) # in a thread
+    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=False) # in a thread
 
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread

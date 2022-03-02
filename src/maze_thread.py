@@ -25,8 +25,9 @@ class MazeThread:
 		# cv2.imwrite("imput.png", self.img)
 
 		self.maze = None
+		self.ref_maze = None
 		self.stopped = False
-
+		
 		self.start()
 
 	def start(self):
@@ -44,7 +45,7 @@ class MazeThread:
 			# img = self.img
 			if img is not None:
 				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-				new_maze, _ = maze_compression(
+				new_maze, ref_maze = maze_compression(
 					img, 
 					(self.y_grids, self.x_grids), 
 					self.sensitivity, 
@@ -54,6 +55,7 @@ class MazeThread:
 						'adaptive':self.adaptive_thresh
 					})
 				self.maze = new_maze
+				self.ref_maze = ref_maze
 				# self.count += 1
 
 			# if the thread indicator variable is set, stop the thread
@@ -72,6 +74,9 @@ class MazeThread:
 				interpolation=cv2.INTER_NEAREST
 			)		
 		return upscaled_maze
+
+	def get_ref_image(self):
+		return self.ref_maze; 
 
 	def stop(self):
 		self.stopped = True
