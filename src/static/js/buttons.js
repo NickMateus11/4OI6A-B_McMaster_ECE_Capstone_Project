@@ -50,6 +50,13 @@ $('#RIGHT').bind('click', function() {
     return false;
 });
 
+$('#PAYLOAD').bind('click', function() {
+    $.getJSON('/send_settings',
+        function(data) {
+    //do nothing
+    });
+    return false;
+});
 //// Must allow redirect for file to download 
 // $('#CAPTURE').bind('click', function() {
 //     $.getJSON('/capture',

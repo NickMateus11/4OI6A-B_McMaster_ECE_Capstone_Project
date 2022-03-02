@@ -26,10 +26,47 @@
     <center>
         <a href="capture" id=CAPTURE><button>SAVE</button></a>
     </center>
-    </div>
+    <br>
+    <center>
+        <form method="post">
+	    <label for="Settings">Settings</label>
+	    <br>
+            <p>Blur: <span id="blur"></span> </p>
+	    <input type="range" min="1" max="100" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
+	    <p>Threshold: <span id="thresh"></span> </p>
+            <input type="range" min="1" max="100" value="{{setting_thresh}}" class="slider" id="threshRange"  name="thresh"></input>
+            <p>Sensitivity: <span id="sens"></span>% </p>
+            <input type="range" min="0" max="100" value="{{setting_sens}}" class="slider" id="sensRange"  name="sens"></input>
+	    <br> 
+            <button type="submit" id="PAYLOAD">Submit</button>
+        </form>
+   </center> 
   </body>
 
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/buttons.js') }}"></script>
+  <script>
+  var blur_slider = document.getElementById("blurRange");
+  var blur_val = document.getElementById("blur");
+  blur_val.innerHTML = blur_slider.value;
+
+  blur_slider.oninput = function() {
+    blur_val.innerHTML = this.value;
+  }
+  var thresh_slider = document.getElementById("threshRange");
+  var thresh_val = document.getElementById("thresh");
+  thresh_val.innerHTML = thresh_slider.value;
+
+  thresh_slider.oninput = function() {
+    thresh_val.innerHTML = this.value;
+  }
+  var sens_slider = document.getElementById("sensRange");
+  var sens_val = document.getElementById("sens");
+  sens_val.innerHTML = sens_slider.value;
+
+  sens_slider.oninput = function() {
+    sens_val.innerHTML = this.value;
+  }
+  </script>
 
 </html>
