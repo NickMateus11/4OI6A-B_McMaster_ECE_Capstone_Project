@@ -60,19 +60,21 @@ def four_point_transform(image, pts):
 
 def skew1(args):
 	# load the image and grab the source coordinates (i.e. the list of
-    # of (x, y) points)
-    # NOTE: using the 'eval' function is bad form, but for this example
-    # let's just roll with it -- in future posts I'll show you how to
-    # automatically determine the coordinates without pre-supplying them
-    image = cv2.imread(args["image"])
-    pts = np.array(eval(args["coords"]), dtype = "float32")
-    # apply the four point tranform to obtain a "birds eye view" of
-    # the image
-    warped = four_point_transform(image, pts)
-    # show the original and warped images
-    cv2.imshow("Original", image)
-    cv2.imshow("Warped", warped)
-    cv2.waitKey(0)
+	# of (x, y) points)
+	# NOTE: using the 'eval' function is bad form, but for this example
+	# let's just roll with it -- in future posts I'll show you how to
+	# automatically determine the coordinates without pre-supplying them
+	image = cv2.imread(args["image"])
+	pts = np.array(eval(args["coords"]), dtype = "float32")
+	# apply the four point tranform to obtain a "birds eye view" of
+	# the image
+	warped = four_point_transform(image, pts)
+	# show the original and warped images
+	cv2.imshow("Original", image)
+	cv2.imshow("Warped", warped)
+	cv2.waitKey(0)
+
+	return warped
 
 ##########################################
 # auto perspective change - using contours
@@ -142,6 +144,8 @@ def skew2(args):
 	cv2.imshow("Scanned", imutils.resize(warped, height = 650))
 	cv2.waitKey(0)
 
+	return warped
+
 
 if __name__ == '__main__':  
     # construct the argument parse and parse the arguments
@@ -151,12 +155,15 @@ if __name__ == '__main__':
 	args = vars(ap.parse_args())
 	
 	if args["coords"] is not None:
-		skew1(args)
+		res = skew1(args)
+		print(cv2.imwrite("res.png", res))
 	else:
-		skew2(args)
+		res = skew2(args)
+		print(cv2.imwrite("res.png", res))
 
 # Execution Example:
 # python .\skew_correction.py -i ..\images\transform.jpg --coords "[(108, 195), (420, 160), (511, 341), (203, 466)]"
+# python .\skew_correction.py -i ..\images\pi_camera_capture.jpg --cords "[(84,40),(237,41),(245,202),(73,200)]"
 
 
 
