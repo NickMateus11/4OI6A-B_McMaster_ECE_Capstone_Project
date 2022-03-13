@@ -152,9 +152,18 @@ if __name__ == '__main__':
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-i", "--image", help = "path to the image file")
 	ap.add_argument("-c", "--coords", help = "comma seperated list of source points", required=False)
+	ap.add_argument("-f", "--find-corners", required=False, action="store_true")
 	args = vars(ap.parse_args())
 	
-	if args["coords"] is not None:
+	if args["coords"]:
+		res = skew1(args)
+		print(cv2.imwrite("res.png", res))
+	elif args["find_corners"]:
+		import colour_thresholding as cthresh
+		frame = cv2.imread(args["image"])
+		corners = cthresh.locate_corners(frame, (0, 128, 0), (100, 255, 100))
+		args["coords"] = str([(c[0][0],c[0][1]) for c in corners])
+		print(args)
 		res = skew1(args)
 		print(cv2.imwrite("res.png", res))
 	else:
