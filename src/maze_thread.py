@@ -4,6 +4,7 @@ from image_test import maze_compression
 from threading import Thread
 from camera_flask_setup import VideoCamera
 import time
+from colour_thresholding import locate_ball
 
 class MazeThread:
 	def __init__(self, video_stream:VideoCamera):
@@ -46,11 +47,10 @@ class MazeThread:
 		while (True):
 			# grab the frame from the stream
 			img = self.video_stream.get_latest_frame(crop_region=self.crop_region)
-			# img = self.img
 			if img is not None:
-				img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 				new_maze, ref_maze = maze_compression(
-					img, 
+					gray_img, 
 					(self.y_grids, self.x_grids), 
 					self.sensitivity, 
 					preprocess={
@@ -61,8 +61,15 @@ class MazeThread:
 						"c":self.c, 
 						'adaptive':self.adaptive_thresh
 					})
-				self.maze = new_maze
+				self.maze = cv2.cvtColor(new_maze*255, cv2.COLOR_GRAY2BGR)
 				self.ref_maze = ref_maze
+
+				(x,y) = locate_ball(img, (0,128,0), (100,255,100))
+				if (x and y):
+					cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
+					cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
+					self.maze[cy,cx,:] = (0,255,0)
+
 				# self.count += 1
 
 			# if the thread indicator variable is set, stop the thread
@@ -76,7 +83,7 @@ class MazeThread:
 	
 	def get_scaled_maze(self):
 		upscaled_maze = cv2.resize(
-				self.read_latest()*255, 
+				self.read_latest(), 
 				(self.video_stream.w, self.video_stream.h), 
 				interpolation=cv2.INTER_NEAREST
 			)		
