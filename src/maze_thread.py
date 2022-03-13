@@ -4,6 +4,7 @@ from image_test import maze_compression
 from threading import Thread
 from camera_flask_setup import VideoCamera
 import time
+
 from colour_thresholding import locate_ball
 
 class MazeThread:
@@ -19,8 +20,6 @@ class MazeThread:
 		self.adaptive_thresh = True
 		self.block = 45
 		self.c = 18
-
-		self.crop_region = (240, 240)
 		
 		self.video_stream = video_stream
 		
@@ -46,7 +45,7 @@ class MazeThread:
 		# keep looping infinitely until the thread is stopped
 		while (True):
 			# grab the frame from the stream
-			img = self.video_stream.get_latest_frame(crop_region=self.crop_region)
+			img = self.video_stream.get_latest_processed_frame()
 			if img is not None:
 				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 				new_maze, ref_maze = maze_compression(
