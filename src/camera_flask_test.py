@@ -62,9 +62,7 @@ def frame_gen():
         # set crop region for the maze
         maze_thread.crop_region = crop_region
 
-        grid_size = (8,8) # x,y
-        grid_y = grid_size[1]
-        grid_x = grid_size[0]
+        grid_x, grid_y = (8,8) # x,y
         draw_grid(frame, grid_y, grid_x, x_offset=crop_amount_w//2, y_offset=crop_amount_h//2)
 
         cv2.rectangle(frame, (crop_amount_w//2+1, crop_amount_h//2+1), (w-crop_amount_w//2-1, h-crop_amount_h//2-1), (0,0,255), 2)
