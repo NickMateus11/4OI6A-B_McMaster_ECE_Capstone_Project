@@ -11,7 +11,12 @@ from image_test import maze_compression
 def locate_corners(frame, lower_bound, upper_bound):
     # frame_blur = cv2.blur(frame, (5,5))
     mask = cv2.inRange(frame, lower_bound, upper_bound)
-    cnts, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )   
+
+    # raspberry pi ONLY
+    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
+    
+    # # opencv 2   
+    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0]   
 
     cnts.sort(key=lambda cnt: cv2.contourArea(cnt), reverse=True)
     corners = [ cv2.minEnclosingCircle(cnt) for cnt in cnts[:4] ]
@@ -25,8 +30,13 @@ def locate_corners(frame, lower_bound, upper_bound):
 def locate_ball(frame, lower_bound, upper_bound):
     # frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
     # frame_blur = cv2.blur(frame, (15,15))
-    mask = cv2.inRange(frame, lower_bound, upper_bound )
-    cnts, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )   
+    mask = cv2.inRange(frame, lower_bound, upper_bound ) 
+
+    # raspberry pi ONLY
+    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
+    
+    # # opencv 2   
+    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0]     
 
     if len(cnts):
         cnts.sort(key=lambda cnt: cv2.contourArea(cnt), reverse=True)
@@ -58,7 +68,7 @@ if __name__ == '__main__':
     # frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # frame_threshold = cv2.inRange(frame_HSV, (0, 0, 73), (360, 21, 255))
 
-    locate_corners(frame, lower_color_bounds, upper_color_bounds)
+    # locate_corners(frame, lower_color_bounds, upper_color_bounds)
 
     # # find ball
     (x,y) = locate_ball(frame, lower_color_bounds, upper_color_bounds)
