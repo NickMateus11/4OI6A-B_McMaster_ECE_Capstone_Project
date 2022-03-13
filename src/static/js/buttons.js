@@ -51,7 +51,7 @@ $('#RIGHT').bind('click', function() {
 });
 
 $('#PAYLOAD').bind('click', function() {
-    $.getJSON('/send_settings',
+    $.postJSON('/',
         function(data) {
     //do nothing
     });

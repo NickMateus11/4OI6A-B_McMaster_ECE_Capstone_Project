@@ -25,7 +25,7 @@ app = Flask(__name__, static_folder="static")
 def index():
     template_data = {
 	'v_width':pi_camera.w, 
-        'v_height':pi_camera.h,
+    'v_height':pi_camera.h,
 	'setting_blur':maze_thread.blur,
 	'setting_thresh':maze_thread.threshold,
 	'setting_sens':maze_thread.sensitivity*100
@@ -33,12 +33,12 @@ def index():
     if request.method=='POST':
         blur = int(request.form['blur'])
         thresh = int(request.form['thresh'])
-        sens = float(int(request.form['sens'])/100)
+        sens = float(int(request.form['sens'])/100.0)
         print("Blur:",blur)
         print("Thresh:",thresh)
         print("Sens:",sens)
-        maze_thread.blur = blur
-        maze_thread.threshold = thresh
+        maze_thread.blur = blur if blur%2 else blur+1 # must be odd
+        maze_thread.threshold = thresh # TODO: add adaptive thresholding
         maze_thread.sensitivity = sens
         template_data = {
             'v_width':pi_camera.w, 
