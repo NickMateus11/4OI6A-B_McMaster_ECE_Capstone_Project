@@ -46,8 +46,8 @@ if __name__ == '__main__':
     lower_color_bounds = (0, 128, 0)
     upper_color_bounds = (100, 255, 100)
     
-    # filename = "./images/maze_ball_trim.png"
-    filename = "./images/pi_camera_capture.jpg"
+    filename = "./images/maze_ball_trim.png"
+    # filename = "./images/pi_camera_capture.jpg"
     frame = cv2.imread(filename)
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # frame = cv2.resize(frame, (frame.shape[1]//3, frame.shape[0]//3))
@@ -61,21 +61,21 @@ if __name__ == '__main__':
     locate_corners(frame, lower_color_bounds, upper_color_bounds)
 
     # # find ball
-    # frame, (x,y) = locate_ball(frame, lower_color_bounds, upper_color_bounds)
+    (x,y) = locate_ball(frame, lower_color_bounds, upper_color_bounds)
+    if x and y:
+        # generate compressed maze
+        maze, ref_img = maze_compression(frame_gray, grid_size, 0.53, preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
+        maze = cv2.cvtColor(maze*255, cv2.COLOR_GRAY2BGR)
 
-    # # generate compressed maze
-    # maze, ref_img = maze_compression(frame_gray, grid_size, 0.53, preprocess={'block': 255, 'blur':15, 'resize':5, 'adaptive':True})
-    # maze = cv2.cvtColor(maze*255, cv2.COLOR_GRAY2BGR)
+        # mark the location of the ball
+        cx = int(x/frame.shape[1] * (grid_size[1]*2 + 1))
+        cy = int(y/frame.shape[0] * (grid_size[0]*2 + 1))
+        maze[cy,cx,:] = (0,255,0)
 
-    # # mark the location of the ball
-    # cx = int(x/frame.shape[1] * (grid_size[1]*2 + 1))
-    # cy = int(y/frame.shape[0] * (grid_size[0]*2 + 1))
-    # maze[cy,cx,:] = (0,255,0)
+        #enlarge
+        maze = cv2.resize(maze, (ref_img.shape[1], ref_img.shape[0]), interpolation=cv2.INTER_NEAREST)
 
-    # #enlarge
-    # maze = cv2.resize(maze, (ref_img.shape[1], ref_img.shape[0]), interpolation=cv2.INTER_NEAREST)
+        cv2.imshow("img", maze)
 
-    # cv2.imshow("img", maze)
-
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
