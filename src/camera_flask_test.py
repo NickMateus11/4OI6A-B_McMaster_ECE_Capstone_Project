@@ -59,6 +59,9 @@ def frame_gen():
         crop_amount_w = w - crop_region[0] 
         crop_amount_h = h - crop_region[1]
 
+        # set crop region for the maze
+        maze_thread.crop_region = crop_region
+
         grid_size = (8,8) # x,y
         grid_y = grid_size[1]
         grid_x = grid_size[0]
