@@ -2,7 +2,7 @@
 import numpy as np
 import argparse
 import cv2
-from skimage.filters import threshold_local
+# from skimage.filters import threshold_local
 import imutils
 
 def order_points(pts):

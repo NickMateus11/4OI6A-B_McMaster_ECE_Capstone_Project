@@ -4,13 +4,25 @@ import time
 import numpy as np
 
 from fisheye_calib import undistort
+from colour_thresholding import locate_corners
+from skew_correction import four_point_transform
 
 class VideoCamera(object):
-    def __init__(self, resolution=(320,240), sensor_mode=0, flip=False, correction=False, K=None, D=None):
+    def __init__(self, resolution=(320,240), sensor_mode=0, flip=False, 
+                correction=False, K=None, D=None, 
+                skew_fix=False, 
+                crop_region=None):
+
         self.vs = PiVideoStream(resolution=resolution, 
                                 sensor_mode=sensor_mode)
         self.w, self.h = resolution
         self.flip = flip
+
+        self.crop_region = crop_region
+
+        self.skew_fix = skew_fix
+        self.lower_colour_bound = (0,128,0)
+        self.upper_colour_bound = (100,255,100)
 
         # Fisheye Params
         self.fisheye_correction = correction
@@ -26,17 +38,25 @@ class VideoCamera(object):
     def __del__(self):
         self.vs.stop()
 
-    def get_latest_frame(self, crop_region=None):
-        frame = self.vs.read()
-        
+    def get_latest_processed_frame(self):
+        frame = self.get_latest_frame()
+    
         if self.fisheye_correction:
             frame = undistort(frame, self.K, self.D, (frame.shape[1], frame.shape[0]))
         
-        if crop_region is not None:
-            crop_amount_w = self.w - crop_region[0] 
-            crop_amount_h = self.h - crop_region[1]
+        if self.crop_region is not None:
+            crop_amount_w = self.w - self.crop_region[0] 
+            crop_amount_h = self.h - self.crop_region[1]
             frame = frame[0+crop_amount_h//2: self.h-crop_amount_h//2,
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
-        
-        return frame.copy()
+
+        if self.skew_fix:
+            corners = locate_corners(frame, self.lower_colour_bound, self.upper_colour_bound)
+            if len(corners)==4:
+                frame = four_point_transform(frame, corners)
+
+        return frame
+
+    def get_latest_frame(self):     
+        return self.vs.read().copy()
 

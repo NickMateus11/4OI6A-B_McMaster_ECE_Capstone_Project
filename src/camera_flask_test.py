@@ -51,20 +51,14 @@ def index():
 def frame_gen():
     #get camera frame
     while True:
-        frame = pi_camera.get_latest_frame()
+        frame = pi_camera.get_latest_frame() # TODO: make new frame feed for processed frames
         h,w = frame.shape[:2]
 
         # draw crop region with red outline - don't actually crop
-        crop_region = (240, 240)
         crop_amount_w = w - crop_region[0] 
         crop_amount_h = h - crop_region[1]
 
-        # set crop region for the maze
-        maze_thread.crop_region = crop_region
-
-        grid_size = (8,8) # x,y
-        grid_y = grid_size[1]
-        grid_x = grid_size[0]
+        grid_x, grid_y = (8,8) # x,y
         draw_grid(frame, grid_y, grid_x, x_offset=crop_amount_w//2, y_offset=crop_amount_h//2)
 
         cv2.rectangle(frame, (crop_amount_w//2+1, crop_amount_h//2+1), (w-crop_amount_w//2-1, h-crop_amount_h//2-1), (0,0,255), 2)
@@ -117,7 +111,7 @@ def print_test():
 @app.route('/capture')
 def capture():
     print(f"Saving Picture")
-    img = pi_camera.get_latest_frame()
+    img = pi_camera.get_latest_processed_frame()
     res, im_buf_arr = cv2.imencode(".jpg", img)
     bytes_img = io.BytesIO(im_buf_arr.tobytes())
     return send_file(bytes_img, as_attachment=True, download_name="pi_camera_capture.jpg")
@@ -162,7 +156,8 @@ if __name__ == '__main__':
     # Camera Setup
     mode = 0
     resolution = (320, 240)
-    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=True) # in a thread
+    crop_region = (240,240)
+    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=True, crop_region=crop_region) # in a thread
 
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread
