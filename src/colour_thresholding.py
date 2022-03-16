@@ -8,9 +8,10 @@
 import cv2 
 from image_test import maze_compression
 
-def locate_corners(frame, lower_bound, upper_bound):
+def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False):
     # frame_blur = cv2.blur(frame, (5,5))
-    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
+    if convert_HSV:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
     mask = cv2.inRange(frame, lower_bound, upper_bound)
 
     # raspberry pi ONLY

@@ -27,10 +27,9 @@ def imgChange():
     cv2.imshow(windowName, mask)
 
 
-img = cv2.imread('../images/pi_camera_capture_8.jpg')  # input
+img = cv2.imread('../images/pi_camera_capture_9.jpg')  # input
 
-# img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-# img = cv2.inRange(frame_HSV, (0, 0, 73), (360, 21, 255))
+img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 colour_thresh = [[0,0,0], [255,255,255]]
 
