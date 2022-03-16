@@ -161,7 +161,7 @@ if __name__ == '__main__':
 	elif args["find_corners"]:
 		import colour_thresholding as cthresh
 		frame = cv2.imread(args["image"])
-		corners = cthresh.locate_corners(frame, (0, 128, 0), (100, 255, 100))
+		corners = cthresh.locate_corners(frame, (0, 100, 0), (100, 255, 100))
 		args["coords"] = str([(c[0][0],c[0][1]) for c in corners])
 		print(args)
 		res = skew1(args)
