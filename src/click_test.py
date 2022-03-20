@@ -6,6 +6,7 @@ from bfs import solve
 
 from gpiozero import Servo
 import pigpio
+import time
 
 SERVO_PIN_1 = 25
 SERVO_PIN_2 = 24
@@ -190,12 +191,16 @@ def servo_move(path):
     for i in range(len(test2)):
         if test2[i] == 'down':
             pwm.set_servo_pulsewidth(SERVO_PIN_2, 1000)
+            time.sleep(3)
         elif test2[i] == 'up':
             pwm.set_servo_pulsewidth(SERVO_PIN_2, 2000)
+            time.sleep(3)
         elif test2[i] == 'right':
             pwm.set_servo_pulsewidth(SERVO_PIN_1, 1000)
+            time.sleep(3)
         else:
             pwm.set_servo_pulsewidth(SERVO_PIN_1, 2000)
+            time.sleep(3)
 
 
 if __name__ == '__main__':
