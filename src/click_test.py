@@ -99,18 +99,21 @@ def main():
     draw_grid(image, grid_y*2+1, grid_x*2+1)
 
     win_name = "image"
-    cv2.imshow(win_name, image)
+    # cv2.imshow(win_name, image)
 
-    image_copy = image.copy()
-    cv2.setMouseCallback(win_name, click_and_mark,
-                         param=[image, image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
+    # image_copy = image.copy()
+    # cv2.setMouseCallback(win_name, click_and_mark,
+    #                     param=[image, image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
     solution = []
     prev_solution = None
+    start_rect = [(36, 36), (72, 72)]
+    end_rect = [(36, 73), (72, 109)]
     while (True):
-        cv2.imshow(win_name, image_copy)
+        # cv2.imshow(win_name, image_copy)
 
         # start and end exist
         if len(start_rect) and len(end_rect):
+            print(start_rect, end_rect)
             start = ((start_rect[0][0] + start_rect[1][0]) //
                      2, (start_rect[0][1] + start_rect[1][1]) // 2)
             end = ((end_rect[0][0] + end_rect[1][0]) // 2,
