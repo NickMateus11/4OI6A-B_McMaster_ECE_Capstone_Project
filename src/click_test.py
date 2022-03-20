@@ -4,6 +4,18 @@ from image_utils import draw_grid
 from image_test import maze_compression
 from bfs import solve
 
+from gpiozero import Servo
+import pigpio
+
+SERVO_PIN_1 = 25
+SERVO_PIN_2 = 24
+
+pwm = pigpio.pi()
+pwm.set_mode(SERVO_PIN_1, pigpio.OUTPUT)
+pwm.set_PWM_frequency(SERVO_PIN_1, 50)
+pwm.set_mode(SERVO_PIN_2, pigpio.OUTPUT)
+pwm.set_PWM_frequency(SERVO_PIN_2, 50)
+
 
 def coord_to_grid_cell(x, y, img_dim_y, img_dim_x, grid_y, grid_x):
 
@@ -174,6 +186,16 @@ def servo_move(path):
     for k in range(len(test)-1):
         test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
     print(test2)
+
+    for i in range(len(test2)):
+        if test2[i] == 'down':
+            pwm.set_servo_pulsewidth(SERVO_PIN_2, 1000)
+        elif test2[i] == 'up':
+            pwm.set_servo_pulsewidth(SERVO_PIN_2, 2000)
+        elif test2[i] == 'right':
+            pwm.set_servo_pulsewidth(SERVO_PIN_1, 1000)
+        else:
+            pwm.set_servo_pulsewidth(SERVO_PIN_1, 2000)
 
 
 if __name__ == '__main__':
