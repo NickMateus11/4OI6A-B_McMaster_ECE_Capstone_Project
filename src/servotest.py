@@ -10,6 +10,14 @@ servo2 = 24
 pwm = pigpio.pi()
 pwm.set_mode(servo1,pigpio.OUTPUT)
 pwm.set_PWM_frequency(servo1,50)
+pwm.set_mode(servo2,pigpio.OUTPUT)
+pwm.set_PWM_frequency(servo2,50)
+
+
+# range of pwm is 500-2500 -> 1500 is center (90 deg), while 1000/2000 are about 45/135 (or vice-versa)
+
+pwm.set_servo_pulsewidth(servo1,1500)
+pwm.set_servo_pulsewidth(servo2,1500)
 
 while (x != "exit"):
     x = input("WASD5123?")

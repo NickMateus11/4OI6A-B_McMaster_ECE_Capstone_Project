@@ -126,7 +126,6 @@ def main():
 
         # start and end exist
         if len(start_rect) and len(end_rect):
-            print(start_rect, end_rect)
             start = ((start_rect[0][0] + start_rect[1][0]) //
                      2, (start_rect[0][1] + start_rect[1][1]) // 2)
             end = ((end_rect[0][0] + end_rect[1][0]) // 2,
@@ -189,13 +188,14 @@ def servo_move(path):
     print(test2)
 
     for i in range(len(test2)):
-        if test2[i] == 'down':
+        print(i,test2[i][1])
+        if test2[i][1] == 'down':
             pwm.set_servo_pulsewidth(SERVO_PIN_2, 1000)
             time.sleep(3)
-        elif test2[i] == 'up':
+        elif test2[i][1] == 'up':
             pwm.set_servo_pulsewidth(SERVO_PIN_2, 2000)
             time.sleep(3)
-        elif test2[i] == 'right':
+        elif test2[i][1] == 'right':
             pwm.set_servo_pulsewidth(SERVO_PIN_1, 1000)
             time.sleep(3)
         else:
