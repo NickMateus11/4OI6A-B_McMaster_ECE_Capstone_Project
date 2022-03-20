@@ -142,13 +142,13 @@ def main():
 
 def servo_move(path):
     moves = []
+    test = []
+    test2 = []
     v_move = 0
     h_move = 0
     for i in range(0, len(path)-1):
         pointer1 = path[i][::-1]
         pointer2 = path[i+1][::-1]
-        print("p1:", pointer1)
-        print("p2:", pointer2)
         if pointer1[0] < pointer2[0]:
             h_move = "right"
         elif pointer1[0] > pointer2[0]:
@@ -162,11 +162,18 @@ def servo_move(path):
         else:
             v_move = "none"
         moves.append((h_move, v_move))
-    print(moves)
+    # print(moves)
     for j in range(len(moves)-1):
         if (moves[j][0] != moves[j+1][0]) and (moves[j][1] != moves[j+1][1]):
             print("transition at move:", j, "from direction:", moves[j][0] if moves[j][1] == "none" else moves[j][1], ", to direction:",
                   moves[j+1][0] if moves[j+1][1] == "none" else moves[j+1][1])
+            test.append((j, moves[j][0] if moves[j][1]
+                         == "none" else moves[j][1]))
+    print(test)
+    test2.append((test[0][0]-0, test[0][1]))
+    for k in range(len(test)-1):
+        test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
+    print(test2)
 
 
 if __name__ == '__main__':
