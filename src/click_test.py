@@ -4,18 +4,18 @@ from image_utils import draw_grid
 from image_test import maze_compression
 from bfs import solve
 
-from gpiozero import Servo
-import pigpio
-import time
+# from gpiozero import Servo
+# import pigpio
+# import time
 
-SERVO_PIN_1 = 25
-SERVO_PIN_2 = 24
+# SERVO_PIN_1 = 25
+# SERVO_PIN_2 = 24
 
-pwm = pigpio.pi()
-pwm.set_mode(SERVO_PIN_1, pigpio.OUTPUT)
-pwm.set_PWM_frequency(SERVO_PIN_1, 50)
-pwm.set_mode(SERVO_PIN_2, pigpio.OUTPUT)
-pwm.set_PWM_frequency(SERVO_PIN_2, 50)
+# pwm = pigpio.pi()
+# pwm.set_mode(SERVO_PIN_1, pigpio.OUTPUT)
+# pwm.set_PWM_frequency(SERVO_PIN_1, 50)
+# pwm.set_mode(SERVO_PIN_2, pigpio.OUTPUT)
+# pwm.set_PWM_frequency(SERVO_PIN_2, 50)
 
 
 def coord_to_grid_cell(x, y, img_dim_y, img_dim_x, grid_y, grid_x):
@@ -116,7 +116,7 @@ def main():
 
     # image_copy = image.copy()
     # cv2.setMouseCallback(win_name, click_and_mark,
-    #                     param=[image, image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
+    #                      param=[image, image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
     solution = []
     prev_solution = None
     start_rect = [(36, 36), (72, 72)]
@@ -135,14 +135,16 @@ def main():
             #                  start=coord_to_grid_cell(
             #                      *start, *(image.shape[:2]), grid_y*2+1, grid_x*2+1),
             #                  end=coord_to_grid_cell(*end, *(image.shape[:2]), grid_y*2+1, grid_x*2+1))
-            # hardcode test
+            # draw_path(image_copy, solution, (grid_y*2+1, grid_x*2+1))
+
+            # hardcode
             solution = solve(maze,
                              start=(1, 1),
                              end=(15, 15))
-            # draw_path(image_copy, solution, (grid_y*2+1, grid_x*2+1))
-        solution_rev = solution[::-1]
-        if prev_solution != solution:
-            servo_move(solution_rev)
+
+            solution_rev = solution[::-1]
+            if prev_solution != solution:
+                servo_move(solution_rev)
         key = cv2.waitKey(1) & 0xFF
         prev_solution = solution
         if key == 27:
@@ -158,6 +160,7 @@ def servo_move(path):
     test2 = []
     v_move = 0
     h_move = 0
+    moves.append(("none", "none"))
     for i in range(0, len(path)-1):
         pointer1 = path[i][::-1]
         pointer2 = path[i+1][::-1]
@@ -174,33 +177,37 @@ def servo_move(path):
         else:
             v_move = "none"
         moves.append((h_move, v_move))
-    # print(moves)
+    moves.append(("none", "none"))
+    print(moves)
     for j in range(len(moves)-1):
         if (moves[j][0] != moves[j+1][0]) and (moves[j][1] != moves[j+1][1]):
             print("transition at move:", j, "from direction:", moves[j][0] if moves[j][1] == "none" else moves[j][1], ", to direction:",
                   moves[j+1][0] if moves[j+1][1] == "none" else moves[j+1][1])
             test.append((j, moves[j][0] if moves[j][1]
                          == "none" else moves[j][1]))
+    test.append((j, moves[j][0] if moves[j][1]
+                 == "none" else moves[j][1]))
     print(test)
-    test2.append((test[0][0]-0, test[0][1]))
-    for k in range(len(test)-1):
-        test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
-    print(test2)
+    if test != []:
+        test2.append((test[0][0]-0, test[0][1]))
+        for k in range(len(test)-1):
+            test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
+        print(test2)
 
-    for i in range(len(test2)):
-        print(i,test2[i][1])
-        if test2[i][1] == 'down':
-            pwm.set_servo_pulsewidth(SERVO_PIN_2, 1000)
-            time.sleep(3)
-        elif test2[i][1] == 'up':
-            pwm.set_servo_pulsewidth(SERVO_PIN_2, 2000)
-            time.sleep(3)
-        elif test2[i][1] == 'right':
-            pwm.set_servo_pulsewidth(SERVO_PIN_1, 1000)
-            time.sleep(3)
-        else:
-            pwm.set_servo_pulsewidth(SERVO_PIN_1, 2000)
-            time.sleep(3)
+    # for i in range(len(test2)):
+    #     print(i,test2[i][1])
+    #     if test2[i][1] == 'down':
+    #         pwm.set_servo_pulsewidth(SERVO_PIN_2, 1000)
+    #         time.sleep(3)
+    #     elif test2[i][1] == 'up':
+    #         pwm.set_servo_pulsewidth(SERVO_PIN_2, 2000)
+    #         time.sleep(3)
+    #     elif test2[i][1] == 'right':
+    #         pwm.set_servo_pulsewidth(SERVO_PIN_1, 1000)
+    #         time.sleep(3)
+    #     else:
+    #         pwm.set_servo_pulsewidth(SERVO_PIN_1, 2000)
+    #         time.sleep(3)
 
 
 if __name__ == '__main__':
