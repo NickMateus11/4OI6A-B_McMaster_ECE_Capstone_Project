@@ -19,40 +19,82 @@ pwm.set_PWM_frequency(servo2,50)
 pwm.set_servo_pulsewidth(servo1,1500)
 pwm.set_servo_pulsewidth(servo2,1500)
 
+comp1 = 0
+comp2 = 0
+old_value1 = 1500
+old_value2 = 1500
+value1 = 1500
+value2 = 1500
 while (x != "exit"):
-    x = input("WASD5123?")
+    x = input("QWERYUIO or 12346789")
+    if x == "Q":
+        comp1 = 100
     if x == "W":
-        print("0 deg")
-        pwm.set_servo_pulsewidth(servo1,2000)
-        time.sleep(3)
-    if x == "S":
-        print("90 deg")
-        pwm.set_servo_pulsewidth(servo1,500)
-        time.sleep(3)
-    if x == "A":
-        print("90 deg")
-        pwm.set_servo_pulsewidth(servo1,1000)
-        time.sleep(3)
-    if x == "D":
-        print("90 deg")
-        pwm.set_servo_pulsewidth(servo1,1500)
-        time.sleep(3)
-    if x == "5":
-        print("180 deg")
-        pwm.set_servo_pulsewidth(servo2,2000)
-        time.sleep(3)
+        comp1 = 200
+    if x == "E":
+        comp1 = 300
+    if x == "R":
+        comp1 = 400
+    if x == "T":
+        comp1 = 500
+    if x == "Y":
+        comp1 = -100
+    if x == "U":
+        comp1 = -200
+    if x == "I":
+        comp1 = -300
+    if x == "O": 
+        comp1 = -400
+    if x == "P":
+        comp1 = -500 
     if x == "1":
-        print("0 deg")
-        pwm.set_servo_pulsewidth(servo2,500)
-        time.sleep(3)
+        comp2 = 100
     if x == "2":
-        print("60 deg")
-        pwm.set_servo_pulsewidth(servo2,1000)
-        time.sleep(3)
+        comp2 = 200
     if x == "3":
-        print("120 deg")
-        pwm.set_servo_pulsewidth(servo2,1500)
-        time.sleep(3)
+        comp2 = 300
+    if x == "4":
+        comp2 = 400
+    if x == "5":
+        comp2 = 500
+    if x == "6":
+        comp2 = -100
+    if x == "7":
+        comp2 = -200
+    if x == "8":
+        comp2 = -300
+    if x == "9": 
+        comp2 = -400
+    if x == "10":
+        comp2 = -500
+    old_value1 = value1
+    print(old_value1)
+    print(comp1)
+    value1 = old_value1 + comp1
+    print(value1)
+    old_value2 = value2
+    value2 += comp2
+    if old_value1 < value1:
+        for i in range(value1 - old_value1 + 1):
+                pwm.set_servo_pulsewidth(servo1,old_value1 + i)
+    elif old_value1 > value1:
+        for i in range(old_value1 - value1 + 1):
+                pwm.set_servo_pulsewidth(servo1,old_value1 - i)
+    elif old_value1 == value1:
+        pwm.set_servo_pulsewidth(servo1,old_value1)
+    elif old_value2 < value2:
+        for i in range(value2 - old_value2 + 1):
+                pwm.set_servo_pulsewidth(servo2,old_value2 + i)
+    elif old_value2 > value2:
+        for i in range(old_value2 - value2 + 1):
+                pwm.set_servo_pulsewidth(servo2,old_value2 - i)
+    else:
+        pwm.set_servo_pulsewidth(servo2,old_value2)
+    time.sleep(1)
 
+time.sleep(1)
+pwm.set_servo_pulsewidth(servo1,1500)
+time.sleep(1)
+pwm.set_servo_pulsewidth(servo2,1500)
 
 
