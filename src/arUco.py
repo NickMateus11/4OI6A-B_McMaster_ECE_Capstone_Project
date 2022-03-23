@@ -6,16 +6,15 @@ from cv2 import aruco
 # fig = plt.figure()
 # nx = 5
 # ny = 10
-# # for i in range(1, nx*ny+1):
-# #     ax = fig.add_subplot(ny,nx, i)
-# #     img = aruco.drawMarker(aruco_dict,i-1, 700)
-# #     plt.imshow(img, cmap = mpl.cm.gray, interpolation = "nearest")
-# #     ax.axis("off")
+# for i in range(1, nx*ny+1):
+#     ax = fig.add_subplot(ny,nx, i)
+#     img = aruco.drawMarker(aruco_dict,i-1, 700)
+#     plt.imshow(img, cmap = mpl.cm.gray, interpolation = "nearest")
+#     ax.axis("off")
 
 # img = aruco.drawMarker(aruco_dict, 17, 700)
 # plt.imshow(img, cmap = mpl.cm.gray, interpolation = "nearest")
 # plt.axis('off')
-# plt.show()
 
 # frame = cv2.imread("../images/maze_aruco.jpg")
 # plt.figure()

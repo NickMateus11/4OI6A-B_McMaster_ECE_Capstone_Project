@@ -43,25 +43,27 @@ def trim_file(filename):
 
 
 def trim_maze_edge(arr):
-    pass
-    start_row = 0
-    while 0 not in arr[start_row]:
-        start_row += 1
-
-    end_row = len(arr)-1
-    while end_row > start_row and 0 not in arr[end_row]:
-        end_row -= 1
-
     start_cols = []
-    end_cols = []
-    for i in range(start_row, end_row+1):
+    end_cols   = []
+    for i in range(len(arr)):
         try:
             bounds = np.where(arr[i] == 0)[0]
             start_cols.append(bounds[0])
             end_cols.append(bounds[-1])
         except: continue
     start_col = statistics.mode(start_cols)
-    end_col =  statistics.mode(end_cols)
+    end_col   = statistics.mode(end_cols)
 
-    trimmed_arr = arr[start_row:end_row+1, start_col:end_col+1]
+    start_rows = []
+    end_rows   = []
+    for i in range(len(arr[0])):
+        try:
+            bounds = np.where(arr[:,i] == 0)[0]
+            start_rows.append(bounds[0])
+            end_rows.append(bounds[-1])
+        except: continue
+    start_row = statistics.mode(start_rows)
+    end_row   = statistics.mode(end_rows)
+
+    trimmed_arr = arr[start_row:end_row, start_col:end_col]
     return trimmed_arr

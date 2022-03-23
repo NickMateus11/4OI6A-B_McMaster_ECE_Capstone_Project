@@ -42,7 +42,6 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
 
     # TODO: use the preprocess features more
     (cmpr_img, ref_maze) = maze_compression(imageCopy, (y_cell, x_cell), sens_val, 
-                        trim=False,
                         preprocess={
                             'thresh':thresh_val, 
                             "blur":blur_val, 
@@ -50,7 +49,8 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
                             "block":block_val,
                             "c":c_val, 
                             "adaptive": True
-                        }) 
+                        },
+                        trim=True) 
 
     cmpr_img = cv2.resize(cmpr_img*255, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
     # bin_img = cv2.resize(bin_img, (ref_maze.shape[1], ref_maze.shape[0]), interpolation=cv2.INTER_NEAREST)
@@ -100,11 +100,10 @@ def imgchange(thresh_val, blur_val, sens_val, block_val, c_val):
 x_cell = 8
 y_cell = 8
 
-img = cv2.imread('./images/pi_camera_capture.jpg')  # input
+img = cv2.imread('../images/maze.jpg')  # input
 y,x,_ = img.shape
 #resize if too big
 scale = 0.25
-# scale = 1
 y=int(y//scale)
 x=int(x//scale)
 
