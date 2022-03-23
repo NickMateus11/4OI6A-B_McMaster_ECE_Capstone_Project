@@ -25,6 +25,17 @@ def order_points(pts):
 	# return the ordered coordinates
 	return rect
 
+def get_four_corners_from_two_opposites(pt1, pt2):
+	x1, y1 = pt1
+	x2, y2 = pt2
+	xc = (x1+x2)/2
+	yc = (y1+y2)/2
+	xd = (x1-x2)/2
+	yd = (y1-y2)/2
+	pt3 = (xc-yd, yc+xd)
+	pt4 = (xc+yd, yc-xd)
+	return np.array([pt1, pt2, pt3, pt4])
+
 def four_point_transform(image, pts):
 	# obtain a consistent order of the points and unpack them
 	# individually

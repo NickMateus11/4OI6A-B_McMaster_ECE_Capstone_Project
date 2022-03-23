@@ -1,6 +1,6 @@
 # import the necessary packages
 import cv2
-from image_test import maze_compression
+from image_test import maze_compression, preprocess_image
 from threading import Thread
 from camera_flask_setup import VideoCamera
 import time
@@ -30,8 +30,10 @@ class MazeThread:
 
 		self.maze = None
 		self.ref_maze = None
+		self.ball_position = None
 		self.stopped = False
-		
+
+		self.update_maze()
 		self.start()
 
 	def start(self):
@@ -41,10 +43,7 @@ class MazeThread:
 		t.start()
 		return self
 
-	def update(self):
-		# keep looping infinitely until the thread is stopped
-		while (True):
-			# grab the frame from the stream
+	def update_maze(self):
 			img = self.video_stream.get_latest_processed_frame()
 			if img is not None:
 				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -61,13 +60,31 @@ class MazeThread:
 						'adaptive':self.adaptive_thresh
 					})
 				self.maze = cv2.cvtColor(new_maze*255, cv2.COLOR_GRAY2BGR)
-				self.ref_maze = ref_maze
+				# self.ref_maze = ref_maze
 
-				(x,y) = locate_ball(img, (0,128,0), (100,255,100))
+	def update(self):
+		# keep looping infinitely until the thread is stopped
+		while (True):
+			# grab the frame from the stream
+			img = self.video_stream.get_latest_processed_frame()
+			if img is not None:
+				preprocess={
+					'thresh':self.threshold, 
+					'blur':self.blur, 
+					"resize":1, 
+					"block":self.block,
+					"c":self.c, 
+					'adaptive':self.adaptive_thresh
+				}
+				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+				self.ref_maze = preprocess_image(gray_img, **preprocess)
+
+				(x,y), r, mask = locate_ball(img, (0,128,0), (100,255,100))
 				if (x and y):
 					cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
 					cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
-					self.maze[cy,cx,:] = (0,255,0)
+					self.ball_position = (cx, cy)
+					# self.maze[cy,cx,:] = (0,255,0)
 
 				# self.count += 1
 
@@ -80,12 +97,12 @@ class MazeThread:
 	def read_latest(self):
 		return self.maze.copy()
 	
-	def get_scaled_maze(self):
-		upscaled_maze = cv2.resize(
-				self.read_latest(), 
-				(self.video_stream.w, self.video_stream.h), 
-				interpolation=cv2.INTER_NEAREST
-			)		
+	def get_scaled_maze(self, include_ball=True):
+		maze = self.read_latest()
+		processed_h, processed_w = self.video_stream.get_latest_processed_frame().shape[:2]
+		if include_ball and self.ball_position is not None:
+			maze[self.ball_position[1], self.ball_position[0],:] = (0,255,0) 
+		upscaled_maze = cv2.resize(maze, (processed_w, processed_h), interpolation=cv2.INTER_NEAREST)		
 		return upscaled_maze
 
 	def get_ref_image(self):

@@ -1,9 +1,5 @@
-import numpy as np
-import cv2, PIL
+import cv2
 from cv2 import aruco
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import pandas as pd
 
 # aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
 
@@ -21,21 +17,37 @@ import pandas as pd
 # plt.axis('off')
 # plt.show()
 
-frame = cv2.imread("../images/maze_aruco.jpg")
-plt.figure()
-plt.imshow(frame)
-plt.show()
+# frame = cv2.imread("../images/maze_aruco.jpg")
+# plt.figure()
+# plt.imshow(frame)
+# plt.show()
 
-gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
-parameters =  aruco.DetectorParameters_create()
-corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
-frame_markers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
+# gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+# aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+# parameters =  aruco.DetectorParameters_create()
+# corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+# frame_markers = aruco.drawDetectedMarkers(frame, corners, ids)
+# plt.figure()
+# plt.imshow(frame)
+# plt.show()
 
-plt.figure()
-plt.imshow(frame_markers)
-for i in range(len(ids)):
-    c = corners[i][0]
-    plt.plot([c[:, 0].mean()], [c[:, 1].mean()], "o", label = "id={0}".format(ids[i]))
-plt.legend()
-plt.show()
+# plt.figure()
+# plt.imshow(frame_markers)
+# for i in range(len(ids)):
+#     c = corners[i][0]
+#     plt.plot([c[:, 0].mean()], [c[:, 1].mean()], "o", label = "id={0}".format(ids[i]))
+# plt.legend()
+# plt.show()
+
+def find_markers(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+    parameters =  aruco.DetectorParameters_create()
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+    avg_points = []
+    if ids is not None:
+        for i in range(len(ids)):
+            c = corners[i][0]
+            avg_points.append((c[:, 0].mean(), c[:, 1].mean()))
+    frame_markers = aruco.drawDetectedMarkers(img, corners, ids)
+    return avg_points, frame_markers

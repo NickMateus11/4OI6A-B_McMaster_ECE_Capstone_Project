@@ -3,7 +3,7 @@ import cv2
 import time
 import numpy as np
 
-from fisheye_calib import undistort
+from fisheye_calib import undistort, undistort2
 from colour_thresholding import locate_corners
 from skew_correction import four_point_transform
 
@@ -27,10 +27,17 @@ class VideoCamera(object):
         # Fisheye Params
         self.fisheye_correction = correction
         if self.fisheye_correction:
-            if K is None:
-                self.K=np.array([[154.59426972365793, 0.0, 153.6848583692119], [0.0, 154.3517630161616, 107.27567776876337], [0.0, 0.0, 1.0]])
-            if D is None:
-                self.D=np.array([[-0.012920290356728127], [-0.0811284577051761], [0.0956426843995683], [-0.04483463666625924]])
+            if max(resolution)<400:
+                if K is None:
+                    self.K=np.array([[154.59426972365793, 0.0, 153.6848583692119], [0.0, 154.3517630161616, 107.27567776876337], [0.0, 0.0, 1.0]])
+                if D is None:
+                    self.D=np.array([[-0.012920290356728127], [-0.0811284577051761], [0.0956426843995683], [-0.04483463666625924]])
+            else:
+                if K is None:
+                    self.K=np.array([[302.74018036977867, 0.0, 304.9781913793884], [0.0, 301.11011450254375, 213.93634640718042], [0.0, 0.0, 1.0]])
+                if D is None:
+                    self.D=np.array([[-0.05759906030260242], [0.17803603968581097], [-0.31464705611716187], [0.1575447567212531]])
+
         
         self.vs.start()
         time.sleep(2.0)

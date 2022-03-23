@@ -15,10 +15,10 @@ def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False):
     mask = cv2.inRange(frame, lower_bound, upper_bound)
 
     # raspberry pi ONLY
-    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
+    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
     
     # # opencv 2   
-    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0]   
+    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0]   
 
     cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
     corners = [ cv2.minEnclosingCircle(cnt) for cnt in cnts[:4] ]
@@ -37,16 +37,16 @@ def locate_ball(frame, lower_bound, upper_bound, convert_HSV=False):
     mask = cv2.inRange(frame, lower_bound, upper_bound)
 
     # raspberry pi ONLY
-    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
+    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
     
     # # opencv 2   
-    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0] 
+    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0] 
 
     if len(cnts):
         cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
         ((x,y), r) = cv2.minEnclosingCircle(cnts[0])
         return (x,y), r, mask
-    return (None, None), None
+    return (None, None), None, None
 
 
 if __name__ == '__main__':

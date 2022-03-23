@@ -17,6 +17,14 @@ $('#STOP').bind('click', function() {
     return false;
 });
 
+$('#CALIBRATE').bind('click', function() {
+    $.getJSON('/calibrate',
+        function(data) {
+    //do nothing
+    });
+    return false;
+});
+
 $('#UP').bind('click', function() {
     $.getJSON('/up',
         function(data) {
