@@ -134,8 +134,8 @@ def print_test():
 @app.route('/capture')
 def capture():
     print(f"Saving Picture")
-    # img = pi_camera.get_latest_processed_frame()
-    img = pi_camera.get_latest_frame()
+    img = pi_camera.get_latest_processed_frame()
+    # img = pi_camera.get_latest_frame()
     res, im_buf_arr = cv2.imencode(".jpg", img)
     bytes_img = io.BytesIO(im_buf_arr.tobytes())
     return send_file(bytes_img, as_attachment=True, download_name="pi_camera_capture.jpg")
@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
     # Camera Setup
     mode = 0
-    scale = 2
+    scale = 1
     resolution = (320*scale, 240*scale)
     crop_region = (min(resolution),)*2
     pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=True, crop_region=crop_region) # in a thread
