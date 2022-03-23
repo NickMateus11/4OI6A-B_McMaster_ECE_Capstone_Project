@@ -183,7 +183,7 @@ if __name__ == '__main__':
 
 # Execution Example:
 # python .\skew_correction.py -i ..\images\transform.jpg --coords "[(108, 195), (420, 160), (511, 341), (203, 466)]"
-# python .\skew_correction.py -i ..\images\pi_camera_capture.jpg --cords "[(84,40),(237,41),(245,202),(73,200)]"
+# python .\skew_correction.py -i ..\images\pi_camera_capture_11.jpg --coords "[(50,50),(220,22),(230,235),(50,200)]"
 
 
 
