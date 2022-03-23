@@ -58,7 +58,8 @@ class MazeThread:
 						"block":self.block,
 						"c":self.c, 
 						'adaptive':self.adaptive_thresh
-					})
+					},
+					trim=True)
 				self.maze = cv2.cvtColor(new_maze*255, cv2.COLOR_GRAY2BGR)
 				# self.ref_maze = ref_maze
 
