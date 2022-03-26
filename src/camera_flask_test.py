@@ -12,9 +12,10 @@ import numpy as np
 
 
 from maze_thread import MazeThread 
-from image_utils import draw_grid
+from image_utils import draw_grid, trim_maze_edge
 from arUco import find_markers
 from skew_correction import get_four_corners_from_two_opposites, four_point_transform
+from colour_thresholding import locate_ball
 
 
 SERVO_PIN_1 = 25
@@ -63,25 +64,36 @@ def processed_frame_gen():
     #get camera frame
     while True:
         frame = pi_camera.get_latest_processed_frame()
+        _, crop_vals = trim_maze_edge(maze_thread.get_ref_image()) 
+
+        # trim image to reflect how to maze is going to be processed - so ball tracking is accurate
+        (start_col, end_col, start_row, end_row) = crop_vals
+        # frame = frame[start_row:end_row, start_col:end_col]
+
+        # (x,y), r, mask = locate_ball(frame, (120,0,0), (255,255,255), convert_HSV=True)
         h,w = frame.shape[:2]
 
         # draw crop region with red outline - don't actually crop
-        crop_amount_w = w - crop_region[0] 
-        crop_amount_h = h - crop_region[1]
+        # crop_amount_w = w - crop_region[0] 
+        # crop_amount_h = h - crop_region[1]
 
 
-        corners, frame = find_markers(frame)
-        if (len(corners) == 2):
-            # print(corners)
-            pts = get_four_corners_from_two_opposites(*corners)
-            for p in pts:
-                cv2.circle(frame, (int(p[0]), int(p[1])), 4, (0,0,255), 3)
-            frame = four_point_transform(frame, pts)
+        # corners, frame = find_markers(frame)
+        # if (len(corners) == 2):
+        #     # print(corners)
+        #     pts = get_four_corners_from_two_opposites(*corners)
+        #     for p in pts:
+        #         cv2.circle(frame, (int(p[0]), int(p[1])), 4, (0,0,255), 3)
+        #     frame = four_point_transform(frame, pts)
 
 
         grid_x, grid_y = (8,8) # x,y
-        draw_grid(frame, grid_y, grid_x, x_offset=crop_amount_w//2, y_offset=crop_amount_h//2)
+        draw_grid(frame, grid_y, grid_x, x_offset=start_col, y_offset=start_row)
         # cv2.rectangle(frame, (crop_amount_w//2+1, crop_amount_h//2+1), (w-crop_amount_w//2-1, h-crop_amount_h//2-1), (0,0,255), 2)
+        
+        # if x and y and r:
+        #     cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
+
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')

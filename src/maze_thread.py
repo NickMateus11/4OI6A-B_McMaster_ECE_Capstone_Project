@@ -7,6 +7,8 @@ import time
 
 from colour_thresholding import locate_ball
 
+from image_utils import trim_maze_edge
+
 class MazeThread:
 	def __init__(self, video_stream:VideoCamera):
 		self.count = 0
@@ -79,11 +81,18 @@ class MazeThread:
 				}
 				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 				self.ref_maze = preprocess_image(gray_img, **preprocess)
+				_, crop_vals = trim_maze_edge(self.ref_maze) 
 
-				(x,y), r, mask = locate_ball(img, (0,128,0), (100,255,100))
+				# trim image to reflect how to maze is going to be processed - so ball tracking is accurate
+				(start_col, end_col, start_row, end_row) = crop_vals
+				trimmed_img = img[start_row:end_row, start_col:end_col]
+				(x,y), r, mask = locate_ball(trimmed_img, (120,0,0), (255,255,255), convert_HSV=True)
 				if (x and y):
-					cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
-					cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
+					# cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
+					# cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
+					cx = int(x/trimmed_img.shape[1] * (self.x_grids)) * 2 + 1
+					cy = int(y/trimmed_img.shape[0] * (self.y_grids)) * 2 + 1
+
 					self.ball_position = (cx, cy)
 					# self.maze[cy,cx,:] = (0,255,0)
 

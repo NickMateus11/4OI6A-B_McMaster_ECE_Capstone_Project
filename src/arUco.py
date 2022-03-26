@@ -1,7 +1,7 @@
 import cv2
 from cv2 import aruco
-import matplotlib.pyplot as plt
-import matplotlib as mpl
+# import matplotlib.pyplot as plt
+# import matplotlib as mpl
 
 
 def find_markers(img):

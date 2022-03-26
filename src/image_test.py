@@ -60,7 +60,8 @@ def maze_compression(img, grid_size, sensitivity, preprocess=None, trim=False):
 
     # TODO: remove trimming - doesn't work well with real-world images
     if trim:
-        trimmed_maze = trim_maze_edge(img) // 255  # trim and normalize to 0s and 1s
+        trimmed_maze, _ = trim_maze_edge(img) # trim and normalize to 0s and 1s
+        trimmed_maze = trimmed_maze // 255 
     else: 
         trimmed_maze = img // 255
     y_dim, x_dim = trimmed_maze.shape[:2]

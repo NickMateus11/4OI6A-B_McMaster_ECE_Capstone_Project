@@ -51,8 +51,12 @@ def trim_maze_edge(arr):
             start_cols.append(bounds[0])
             end_cols.append(bounds[-1])
         except: continue
-    start_col = statistics.mode(start_cols)
-    end_col   = statistics.mode(end_cols)
+    try:
+        start_col = statistics.mode(start_cols)
+        end_col   = statistics.mode(end_cols)
+    except statistics.StatisticsError:
+        start_col = 0
+        end_col = len(arr[0])
 
     start_rows = []
     end_rows   = []
@@ -62,8 +66,13 @@ def trim_maze_edge(arr):
             start_rows.append(bounds[0])
             end_rows.append(bounds[-1])
         except: continue
-    start_row = statistics.mode(start_rows)
-    end_row   = statistics.mode(end_rows)
+    
+    try:
+        start_row = statistics.mode(start_rows)
+        end_row   = statistics.mode(end_rows)
+    except statistics.StatisticsError:
+        start_row = 0
+        end_row = len(arr)
 
     trimmed_arr = arr[start_row:end_row, start_col:end_col]
-    return trimmed_arr
+    return trimmed_arr, (start_col, end_col, start_row, end_row)
