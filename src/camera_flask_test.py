@@ -103,6 +103,14 @@ def maze_gen():
     #get maze frame
     while True:
         frame = maze_thread.get_scaled_maze()
+
+        # display ball realtime
+        (x,y), r, mask = locate_ball(
+            pi_camera.get_latest_processed_frame(),
+            (120,0,0), (255,255,255), convert_HSV=True)
+        if x and y and r:
+            cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
+
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
