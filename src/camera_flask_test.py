@@ -17,9 +17,8 @@ from arUco import find_markers
 from skew_correction import get_four_corners_from_two_opposites, four_point_transform
 from colour_thresholding import locate_ball
 
-
-SERVO_PIN_1 = 25
-SERVO_PIN_2 = 24
+from servotest import smooth_rotate
+from servotest import MAX_ADJUSTED, MIN_ADJUSTED, SERVO_PIN_1
 
 
 # Flask App
@@ -166,41 +165,39 @@ def calibrate():
     return json.dumps({"success": True}), 200
 
 
-# @app.route('/up')
-# def up():
-#     print("up")
-#     print("0 deg")
-#     pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
-#     return json.dumps({"success": True}), 200
+@app.route('/up')
+def up():
+    print("up")
+    print("0 deg")
+    smooth_rotate(SERVO_PIN_1, MAX_ADJUSTED)
+    # pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
+    return json.dumps({"success": True}), 200
 
-# @app.route('/down')
-# def down():
-#     print("down")
-#     print("90 deg")
-#     pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
-#     return json.dumps({"success": True}), 200
+@app.route('/down')
+def down():
+    print("down")
+    print("90 deg")
+    smooth_rotate(SERVO_PIN_1, MIN_ADJUSTED)
+    # pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
+    return json.dumps({"success": True}), 200
 
-# @app.route('/left')
-# def left():
-#     print("left")
-#     print("90 deg")
-#     pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
-#     return json.dumps({"success": True}), 200
+@app.route('/left')
+def left():
+    print("left")
+    print("90 deg")
+    smooth_rotate(SERVO_PIN_1, MAX_ADJUSTED)
+    # pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
+    return json.dumps({"success": True}), 200
 
-# @app.route('/right')
-# def right():
-#     print("right")
-#     print("0 deg")
-#     pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
-#     return json.dumps({"success": True}), 200
+@app.route('/right')
+def right():
+    print("right")
+    print("0 deg")
+    smooth_rotate(SERVO_PIN_1, MIN_ADJUSTED)
+    # pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
+    return json.dumps({"success": True}), 200
 
 if __name__ == '__main__':
-
-    # pwm = pigpio.pi()
-    # pwm.set_mode(SERVO_PIN_1,pigpio.OUTPUT)
-    # pwm.set_PWM_frequency(SERVO_PIN_1,50)
-    # pwm.set_mode(SERVO_PIN_2,pigpio.OUTPUT)
-    # pwm.set_PWM_frequency(SERVO_PIN_2,50)
 
     # Camera Setup
     mode = 0

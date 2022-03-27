@@ -13,23 +13,23 @@ sudo pigpiod
 MAX_SERVO = 2500
 MIN_SERVO = 500
 
-ROT_RESTRICT_FACTOR = 0.22 # restict PWM to this much of full rotation
+ROT_RESTRICT_FACTOR = .22 # restict PWM to this much of full rotation
 
 MAX_ADJUSTED = int(MAX_SERVO - (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
 MIN_ADJUSTED = int(MIN_SERVO + (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
 
 
-servo1 = 4
+SERVO_PIN_1 = 4
 
 pwm = pigpio.pi()
-pwm.set_mode(servo1, pigpio.OUTPUT)
-pwm.set_PWM_frequency(servo1, 50)
+pwm.set_mode(SERVO_PIN_1, pigpio.OUTPUT)
+pwm.set_PWM_frequency(SERVO_PIN_1, 50)
 
 
-def smooth_rotate(gpio, target, current, step_size=20, delay=0.01):
-    starting_val = current
+def smooth_rotate(gpio, target, step_size=20, delay=0.01):
+    starting_val = pwm.get_servo_pulsewidth(gpio)
     
-    if (target < current):
+    if (target < starting_val):
         step_size = -abs(step_size)
     else:
         step_size = +abs(step_size)
@@ -59,7 +59,7 @@ def smooth_rotate(gpio, target, current, step_size=20, delay=0.01):
 def main():
     try:
         val=(MAX_ADJUSTED+MIN_ADJUSTED)//2
-        pwm.set_servo_pulsewidth(servo1, val) # 500-2500
+        pwm.set_servo_pulsewidth(SERVO_PIN_1, val) # 500-2500
         while (True):
             # x = input("+/-: ")
             # if x =='+':
@@ -77,13 +77,13 @@ def main():
             elif (val < MIN_ADJUSTED):
                 val = MIN_ADJUSTED
 
-            smooth_rotate(servo1, target=val, current=old_val)
+            smooth_rotate(SERVO_PIN_1, target=val)
 
             time.sleep(0.5)
     except KeyboardInterrupt:
         pass
     
-    pwm.set_servo_pulsewidth(servo1, (MAX_ADJUSTED+MIN_ADJUSTED)//2)
+    pwm.set_servo_pulsewidth(SERVO_PIN_1, (MAX_ADJUSTED+MIN_ADJUSTED)//2)
 
 
 if __name__ == '__main__':

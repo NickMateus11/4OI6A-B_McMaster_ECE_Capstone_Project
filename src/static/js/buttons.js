@@ -65,7 +65,7 @@ $('#PAYLOAD').bind('click', function() {
     });
     return false;
 });
-//// Must allow redirect for file to download 
+//// *** Must allow redirect for file to download - so we don't need this here
 // $('#CAPTURE').bind('click', function() {
 //     $.getJSON('/capture',
 //         function(data) {
