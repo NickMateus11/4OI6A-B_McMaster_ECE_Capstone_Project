@@ -14,11 +14,11 @@ def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
     mask = cv2.inRange(frame, lower_bound, upper_bound)
 
-    # raspberry pi ONLY
-    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
-    
-    # # opencv 2   
-    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0]   
+    # old opencv version
+    if cv2.__version__[0] == '3':
+        cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
+    else: 
+        cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0]   
 
     cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
     corners = [ cv2.minEnclosingCircle(cnt) for cnt in cnts[:4] ]
@@ -34,13 +34,14 @@ def locate_ball(frame, lower_bound, upper_bound, convert_HSV=False):
     # frame_blur = cv2.blur(frame, (15,15))
     if convert_HSV:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
+
     mask = cv2.inRange(frame, lower_bound, upper_bound)
 
-    # raspberry pi ONLY
-    cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
-    
-    # # opencv 2   
-    # cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0] 
+    # old opencv version
+    if cv2.__version__[0] == '3':
+        cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[1]
+    else:  
+        cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE )[0] 
 
     if len(cnts):
         cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)

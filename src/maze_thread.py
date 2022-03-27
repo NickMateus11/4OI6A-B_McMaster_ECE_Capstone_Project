@@ -85,15 +85,18 @@ class MazeThread:
 
 				# trim image to reflect how to maze is going to be processed - so ball tracking is accurate
 				(start_col, end_col, start_row, end_row) = crop_vals
-				trimmed_img = img[start_row:end_row, start_col:end_col]
-				(x,y), r, mask = locate_ball(trimmed_img, (120,0,0), (255,255,255), convert_HSV=True)
-				if (x and y):
-					# cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
-					# cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
-					cx = int(x/trimmed_img.shape[1] * (self.x_grids)) * 2 + 1
-					cy = int(y/trimmed_img.shape[0] * (self.y_grids)) * 2 + 1
 
-					self.ball_position = (cx, cy)
+				# check if trim values are valid
+				if (start_col<end_col and start_row<end_row):
+					trimmed_img = img[start_row:end_row, start_col:end_col]
+					(x,y), r, mask = locate_ball(trimmed_img, (120,0,0), (255,255,255), convert_HSV=True)
+					if (x and y):
+						# cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
+						# cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
+						cx = int(x/trimmed_img.shape[1] * (self.x_grids)) * 2 + 1
+						cy = int(y/trimmed_img.shape[0] * (self.y_grids)) * 2 + 1
+
+						self.ball_position = (cx, cy)
 					# self.maze[cy,cx,:] = (0,255,0)
 
 				# self.count += 1
