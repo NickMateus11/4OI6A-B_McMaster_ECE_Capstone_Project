@@ -39,7 +39,7 @@ def imgChange():
 
 
 img = cv2.imread('../images/maze_hazards0.png')  # input
-
+img = cv2.resize(img, (400, 600))
 img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 colour_thresh = [[0, 0, 0], [255, 255, 255]]
