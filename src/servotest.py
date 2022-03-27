@@ -57,28 +57,33 @@ def smooth_rotate(gpio, target, current, step_size=20, delay=0.01):
 
 
 def main():
-    val=(MAX_ADJUSTED+MIN_ADJUSTED)//2
-    pwm.set_servo_pulsewidth(servo1, val) # 500-2500
-    while (True):
-        # x = input("+/-: ")
-        # if x =='+':
-        #     compensation = 100 
-        # elif x=='-':
-        #     compensation = -100
-        # else:
-        #     continue
-        compensation = random.randint(50, 1000) * [-1,1][random.randrange(2)] # (50->100) * (-1 or 1) ==> (-1000->50) or (50->1000)
+    try:
+        val=(MAX_ADJUSTED+MIN_ADJUSTED)//2
+        pwm.set_servo_pulsewidth(servo1, val) # 500-2500
+        while (True):
+            # x = input("+/-: ")
+            # if x =='+':
+            #     compensation = 100 
+            # elif x=='-':
+            #     compensation = -100
+            # else:
+            #     continue
+            compensation = random.randint(50, 1000) * [-1,1][random.randrange(2)] # (50->100) * (-1 or 1) ==> (-1000->50) or (50->1000)
 
-        old_val = val
-        val += compensation
-        if (val > MAX_ADJUSTED):
-            val = MAX_ADJUSTED
-        elif (val < MIN_ADJUSTED):
-            val = MIN_ADJUSTED
+            old_val = val
+            val += compensation
+            if (val > MAX_ADJUSTED):
+                val = MAX_ADJUSTED
+            elif (val < MIN_ADJUSTED):
+                val = MIN_ADJUSTED
 
-        smooth_rotate(servo1, target=val, current=old_val)
+            smooth_rotate(servo1, target=val, current=old_val)
 
-pwm.set_servo_pulsewidth(servo1, (MAX_ADJUSTED+MIN_ADJUSTED)//2)
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        pass
+    
+    pwm.set_servo_pulsewidth(servo1, (MAX_ADJUSTED+MIN_ADJUSTED)//2)
 
 
 if __name__ == '__main__':
