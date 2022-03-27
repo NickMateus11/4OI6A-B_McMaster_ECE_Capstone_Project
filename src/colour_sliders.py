@@ -6,32 +6,43 @@ from image_utils import draw_grid
 def L0(val):
     colour_thresh[0][0] = val
     imgChange()
+
+
 def L1(val):
     colour_thresh[0][1] = val
     imgChange()
+
+
 def L2(val):
     colour_thresh[0][2] = val
     imgChange()
+
+
 def U0(val):
     colour_thresh[1][0] = val
     imgChange()
+
+
 def U1(val):
     colour_thresh[1][1] = val
     imgChange()
+
+
 def U2(val):
     colour_thresh[1][2] = val
     imgChange()
+
 
 def imgChange():
     mask = cv2.inRange(img, tuple(colour_thresh[0]), tuple(colour_thresh[1]))
     cv2.imshow(windowName, mask)
 
 
-img = cv2.imread('../images/pi_camera_capture_9.jpg')  # input
+img = cv2.imread('../images/maze_hazards0.png')  # input
 
 img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-colour_thresh = [[0,0,0], [255,255,255]]
+colour_thresh = [[0, 0, 0], [255, 255, 255]]
 
 windowName = 'image'
 

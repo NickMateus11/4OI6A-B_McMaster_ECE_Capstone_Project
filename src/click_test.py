@@ -112,17 +112,17 @@ def main():
     draw_grid(image, grid_y*2+1, grid_x*2+1)
 
     win_name = "image"
-    # cv2.imshow(win_name, image)
+    cv2.imshow(win_name, image)
 
-    # image_copy = image.copy()
-    # cv2.setMouseCallback(win_name, click_and_mark,
-    #                      param=[image, image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
+    image_copy = image.copy()
+    cv2.setMouseCallback(win_name, click_and_mark,
+                         param=[image, image_copy, (grid_y*2+1, grid_x*2+1), end_rect, start_rect])
     solution = []
     prev_solution = None
-    start_rect = [(36, 36), (72, 72)]
-    end_rect = [(36, 73), (72, 109)]
+    # start_rect = [(36, 36), (72, 72)]
+    # end_rect = [(36, 73), (72, 109)]
     while (True):
-        # cv2.imshow(win_name, image_copy)
+        cv2.imshow(win_name, image_copy)
 
         # start and end exist
         if len(start_rect) and len(end_rect):
@@ -131,16 +131,16 @@ def main():
             end = ((end_rect[0][0] + end_rect[1][0]) // 2,
                    (end_rect[0][1] + end_rect[1][1]) // 2)
             # with the overlay
-            # solution = solve(maze,
-            #                  start=coord_to_grid_cell(
-            #                      *start, *(image.shape[:2]), grid_y*2+1, grid_x*2+1),
-            #                  end=coord_to_grid_cell(*end, *(image.shape[:2]), grid_y*2+1, grid_x*2+1))
-            # draw_path(image_copy, solution, (grid_y*2+1, grid_x*2+1))
-
-            # hardcode
             solution = solve(maze,
-                             start=(1, 1),
-                             end=(15, 15))
+                             start=coord_to_grid_cell(
+                                 *start, *(image.shape[:2]), grid_y*2+1, grid_x*2+1),
+                             end=coord_to_grid_cell(*end, *(image.shape[:2]), grid_y*2+1, grid_x*2+1))
+            draw_path(image_copy, solution, (grid_y*2+1, grid_x*2+1))
+
+            # # hardcode
+            # solution = solve(maze,
+            #                  start=(1, 1),
+            #                  end=(15, 15))
 
             solution_rev = solution[::-1]
             if prev_solution != solution:
@@ -192,7 +192,7 @@ def servo_move(path):
         test2.append((test[0][0]-0, test[0][1]))
         for k in range(len(test)-1):
             test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
-        print(test2)
+        print("steps from start to end are:", test2)
 
     # for i in range(len(test2)):
     #     print(i,test2[i][1])
