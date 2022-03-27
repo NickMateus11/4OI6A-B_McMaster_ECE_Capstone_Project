@@ -10,6 +10,15 @@ sudo pigpiod
 
 '''
 
+MAX_SERVO = 2500
+MIN_SERVO = 500
+
+ROT_RESTRICT_FACTOR = 0.22 # restict PWM to this much of full rotation
+
+MAX_ADJUSTED = int(MAX_SERVO - (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
+MIN_ADJUSTED = int(MIN_SERVO + (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
+
+
 servo1 = 4
 
 pwm = pigpio.pi()
@@ -28,11 +37,11 @@ def smooth_rotate(gpio, target, current, step_size=20, delay=0.01):
     flag = False
     for i in range(abs((target-starting_val) // step_size)):
         val = (i+1)*step_size + starting_val
-        if (val > 2500):
-            val = 2500
+        if (val > MAX_ADJUSTED):
+            val = MAX_ADJUSTED
             flag = True
-        elif (val < 500):
-            val = 500
+        elif (val < MIN_ADJUSTED):
+            val = MIN_ADJUSTED
             flag = True
 
         pwm.set_servo_pulsewidth(gpio, val)
@@ -46,10 +55,9 @@ def smooth_rotate(gpio, target, current, step_size=20, delay=0.01):
         pwm.set_servo_pulsewidth(gpio, target)
 
 
-MID = 1500
 
 def main():
-    val=MID
+    val=(MAX_ADJUSTED+MIN_ADJUSTED)//2
     pwm.set_servo_pulsewidth(servo1, val) # 500-2500
     while (True):
         # x = input("+/-: ")
@@ -63,14 +71,14 @@ def main():
 
         old_val = val
         val += compensation
-        if (val > 2500):
-            val = 2500
-        elif (val < 500):
-            val = 500
+        if (val > MAX_ADJUSTED):
+            val = MAX_ADJUSTED
+        elif (val < MIN_ADJUSTED):
+            val = MIN_ADJUSTED
 
         smooth_rotate(servo1, target=val, current=old_val)
 
-pwm.set_servo_pulsewidth(servo1, 1500)
+pwm.set_servo_pulsewidth(servo1, (MAX_ADJUSTED+MIN_ADJUSTED)//2)
 
 
 if __name__ == '__main__':
