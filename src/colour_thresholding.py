@@ -73,18 +73,22 @@ def locate_hazards(frame, lower_bound, upper_bound, convert_HSV=False):
                                 cv2.CHAIN_APPROX_SIMPLE)[0]
     cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
     areas = [cv2.contourArea(cnt) for cnt in cnts[:len(cnts)]]
-    print(areas)
     count = 0
     for i in range(len(areas)):
         if areas[i] > 10000:
             count += 1
-    hazards = [cv2.minEnclosingCircle(cnt) for cnt in cnts[:len(cnts)]]
+    print(areas[:count])
+    hazards = [cv2.minEnclosingCircle(cnt) for cnt in cnts[:count]]
     frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
     cv2.drawContours(frame, cnts[:count], -1, (0, 0, 255), 2)
     cv2.imshow("masked", frame)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    return hazards
+    hazard_coords = []
+    for i in range(len(hazards)):
+        hazard_coords.append(hazards[i][0])
+    print(hazard_coords)
+    return hazard_coords
 
 
 if __name__ == '__main__':
@@ -95,7 +99,7 @@ if __name__ == '__main__':
     # lower_color_bounds = (0, 100, 0)
     # upper_color_bounds = (100, 255, 100)
 
-    filename = "../images/maze_hazards_ball1.png"
+    filename = "../images/maze_hazards_ball2.png"
     # filename = "./images/pi_camera_capture.jpg"
     frame = cv2.imread(filename)
     # frame = cv2.resize(frame, (frame.shape[1]//3, frame.shape[0]//3))
@@ -108,7 +112,6 @@ if __name__ == '__main__':
 
     locate_hazards(frame, lower_color_bounds,
                    upper_color_bounds, convert_HSV=True)
-
     # # find ball
     # import numpy as np
     # (x, y), r, mask = locate_ball(
