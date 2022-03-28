@@ -43,7 +43,8 @@ def index():
         maze_thread.blur = blur if blur%2 else blur+1 # must be odd
         maze_thread.block = thresh if thresh%2 else thresh+1
         maze_thread.sensitivity = sens
-        template_data = {
+        template_data = { 
+            **template_data,    # add default template data - and overwrite any new data
             'v_width':pi_camera.w, 
             'v_height':pi_camera.h,
             'setting_blur': blur,       
@@ -86,7 +87,7 @@ def processed_frame_gen():
         #     frame = four_point_transform(frame, pts)
 
 
-        grid_x, grid_y = (8,8) # x,y
+        grid_x, grid_y = (maze_thread.x_grids, maze_thread.y_grids) # x,y
         draw_grid(frame, grid_y, grid_x, x_offset=start_col, y_offset=start_row)
         # cv2.rectangle(frame, (crop_amount_w//2+1, crop_amount_h//2+1), (w-crop_amount_w//2-1, h-crop_amount_h//2-1), (0,0,255), 2)
         
@@ -195,6 +196,19 @@ def right():
     print("0 deg")
     smooth_rotate(SERVO_PIN_1, MIN_ADJUSTED)
     # pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
+    return json.dumps({"success": True}), 200
+
+@app.route('/grid_click', methods=['POST'])
+def grid_click():
+    
+    cell_num = int(json.loads(request.get_data())['cell'])
+    
+    x = cell_num%(maze_thread.x_grids * 2 + 1)
+    y = cell_num//(maze_thread.y_grids * 2 + 1)
+    # print(x, y)
+
+    maze_thread.target_cell = (x,y)
+
     return json.dumps({"success": True}), 200
 
 if __name__ == '__main__':

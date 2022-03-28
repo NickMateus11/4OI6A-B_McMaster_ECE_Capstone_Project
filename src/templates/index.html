@@ -43,6 +43,16 @@
       <button type="submit" id="PAYLOAD">Submit</button>
       </form>
    </center> 
+
+    <table width="{{ p_width }}" height="{{ p_height }}" background="maze_feed" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed; background-repeat: no-repeat">
+      {%for i in range(0, 17)%}
+        <tr>         
+        {%for j in range(0, 17)%}
+          <td class='clickable-cell' id="{{ i*17 + j }}"></td>
+        {%endfor%}
+        </tr>
+      {%endfor%}
+    </table>
   </body>
 
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>

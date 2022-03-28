@@ -33,6 +33,7 @@ class MazeThread:
 		self.maze = None
 		self.ref_maze = None
 		self.ball_position = None
+		self.target_cell = None
 		self.stopped = False
 
 		self.update_maze()
@@ -115,6 +116,8 @@ class MazeThread:
 		processed_h, processed_w = self.video_stream.get_latest_processed_frame().shape[:2]
 		if include_ball and self.ball_position is not None:
 			maze[self.ball_position[1], self.ball_position[0],:] = (0,255,0) 
+		if self.target_cell is not None and list(maze[self.target_cell[1], self.target_cell[0],:]) != [0,0,0]:
+			maze[self.target_cell[1], self.target_cell[0],:] = (128,0,128) 
 		upscaled_maze = cv2.resize(maze, (processed_w, processed_h), interpolation=cv2.INTER_NEAREST)		
 		return upscaled_maze
 
