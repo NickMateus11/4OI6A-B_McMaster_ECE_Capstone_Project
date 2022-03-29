@@ -17,6 +17,7 @@ from arUco import find_markers
 from skew_correction import get_four_corners_from_two_opposites, four_point_transform
 from colour_thresholding import locate_ball
 
+import servotest # instantiates pwm
 from servotest import smooth_rotate
 from servotest import MAX_ADJUSTED, MIN_ADJUSTED, SERVO_PIN_1
 
