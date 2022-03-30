@@ -213,7 +213,7 @@ if __name__ == '__main__':
 
     # Camera Setup
     mode = 0
-    scale = 2
+    scale = 1
     resolution = (320*scale, 240*scale)
     crop_region = (min(resolution),)*2
     pi_camera = VideoCamera(
