@@ -6,7 +6,7 @@ from cv2 import aruco
 
 def find_markers(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+    aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_50)
     parameters =  aruco.DetectorParameters_create()
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
     avg_points = []
