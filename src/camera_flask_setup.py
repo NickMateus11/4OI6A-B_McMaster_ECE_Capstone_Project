@@ -8,6 +8,7 @@ from fisheye_calib import undistort, undistort2
 from colour_thresholding import locate_corners
 from skew_correction import four_point_transform
 from arUco import find_markers
+from corner_detect import getCorners
 
 class VideoCamera(object):
     def __init__(self, resolution=(320,240), sensor_mode=0, flip=False, 
@@ -79,21 +80,13 @@ class VideoCamera(object):
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
 
         if self.skew_fix: # locate aruco corners here
-            # corners = locate_corners(frame, self.lower_colour_bound, self.upper_colour_bound)
-            corners, frame = find_markers(frame)
-            for new in corners:
-                for j in range(len(self.corners)):
-                    print(new[0])
-                    print(new[1])
-                    print(self.corners)
-                    if abs(new[0]-self.corners[j][0]) < self.w//3 and abs(new[1]-self.corners[j][1]) < self.h//3: # simple distance check
-                        self.corners[j] = new
-                        break
-                else: # add to self.corners if new corner
-                    if len(self.corners) != 4:
-                        self.corners.append(new)
-                # self.corners = np.array(corners)
-            print(self.corners)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            corners = getCorners(gray, frame)
+            for c in corners:
+                x = int(c[0])
+                y = int(c[1])
+                cv2.circle(frame, (x,y), 5, (0,255,0), thickness=-1)
+            print(corners)
             if len(self.corners) == 4:
                 frame = four_point_transform(frame, np.array(self.corners))
         

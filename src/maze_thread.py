@@ -63,7 +63,7 @@ class MazeThread:
 						'adaptive':self.adaptive_thresh
 					},
 					trim=True)
-				self.maze = cv2.cvtColor(new_maze*255, cv2.COLOR_GRAY2BGR)
+				self.maze = new_maze
 				# self.ref_maze = ref_maze
 
 	def update(self):
@@ -112,7 +112,7 @@ class MazeThread:
 		return self.maze.copy()
 	
 	def get_scaled_maze(self, include_ball=True):
-		maze = self.read_latest()
+		maze = cv2.cvtColor(self.read_latest()*255, cv2.COLOR_GRAY2BGR)
 		processed_h, processed_w = self.video_stream.get_latest_processed_frame().shape[:2]
 		if include_ball and self.ball_position is not None:
 			maze[self.ball_position[1], self.ball_position[0],:] = (0,255,0) 
