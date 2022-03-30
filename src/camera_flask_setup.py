@@ -82,13 +82,13 @@ class VideoCamera(object):
         if self.skew_fix: # locate aruco corners here
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             corners = getCorners(gray, frame)
-            if len(corners)==4:
-                for c in corners:
-                    x = int(c[0])
-                    y = int(c[1])
-                    cv2.circle(frame, (x,y), 5, (0,255,0), thickness=-1)
-                frame = four_point_transform(frame, np.array(self.corners))
-                print(corners)
+            # if len(corners)==4:
+            #     for c in corners:
+            #         x = int(c[0])
+            #         y = int(c[1])
+            #         cv2.circle(frame, (x,y), 5, (0,255,0), thickness=-1)
+            #     frame = four_point_transform(frame, np.array(self.corners))
+            #     print(corners)
         
         self.latest_processed_frame = frame
 

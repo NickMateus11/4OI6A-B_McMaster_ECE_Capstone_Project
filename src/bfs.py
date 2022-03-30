@@ -16,19 +16,15 @@ def make_step(k, m, a): # TODO: optimize this? - don't be O(n^2)
            m[i][j+1] = k + 1
 
 def solve(a, start, end):
-  print(a,start,end)
   m = []
-  print("A")
   for i in range(len(a)):
       m.append([])
-      print("B")
       for j in range(len(a[i])):
           m[-1].append(0)
   i,j = start
   m[i][j] = 1
 
   k = 0
-  print("C")
   while m[end[0]][end[1]] == 0:
       k += 1
       make_step(k, m, a)
@@ -36,7 +32,6 @@ def solve(a, start, end):
   i, j = end
   k = m[i][j]
   the_path = [(i,j)]
-  print("D")
   while k > 1:
     if i > 0 and m[i - 1][j] == k-1:
       i, j = i-1, j
@@ -54,7 +49,6 @@ def solve(a, start, end):
       i, j = i, j+1
       the_path.append((i, j))
       k -= 1
-  print("E")
   return the_path
 
 images = []

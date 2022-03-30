@@ -105,13 +105,11 @@ def maze_gen():
     ball_coords = maze_thread.ball_position
     new_ball_coords = None
     while True:
-        print(end_set)
         frame = maze_thread.get_scaled_maze()
         new_ball_coords = maze_thread.ball_position
         if maze_thread.ball_position:
             if (new_ball_coords != ball_coords) and end_set:
                 solve_maze()
-                print("solved")
             ball_coords = new_ball_coords
         if path:
             draw_path(frame, path, (maze_thread.y_grids*2+1, maze_thread.x_grids*2+1))
@@ -225,15 +223,11 @@ def grid_click():
 
 def solve_maze():
     global path
-    print(maze_thread.target_cell)
-    print(maze_thread.ball_position)
     maze = maze_thread.maze.copy()
     for i in range(len(maze)):
         for j in range(len(maze[0])):
             maze[i][j] = int(not maze[i][j])
     path = solve(maze,maze_thread.ball_position,maze_thread.target_cell)
-    print("path")
-    print(path)
 
 if __name__ == '__main__':
 
