@@ -29,10 +29,10 @@ app = Flask(__name__, static_folder="static")
 @app.route('/',methods=('GET','POST'))
 def index():
     template_data = {
-	'v_width':pi_camera.w, 
-	'p_width':crop_region[0], 
-    'v_height':pi_camera.h,
-    'p_height':crop_region[1],
+	'v_width':pi_camera.w//scale, 
+	'p_width':crop_region[0]//scale, 
+    'v_height':pi_camera.h//scale,
+    'p_height':crop_region[1]//scale,
 	'setting_blur':maze_thread.blur,
 	'setting_thresh':maze_thread.block,
 	'setting_sens':maze_thread.sensitivity*100
@@ -74,12 +74,10 @@ def processed_frame_gen():
         # (x,y), r, mask = locate_ball(frame, (120,0,0), (255,255,255), convert_HSV=True)
         h,w = frame.shape[:2]
 
-        # draw crop region with red outline - don't actually crop
-        # crop_amount_w = w - crop_region[0] 
-        # crop_amount_h = h - crop_region[1]
+        # corners, frame = find_markers(pi_camera.get_latest_processed_frame(preserve_resolution=True))
+        # if len(corners) == 4:
+        #     frame = four_point_transform(frame, np.array(corners))
 
-
-        # corners, frame = find_markers(frame)
         # if (len(corners) == 2):
         #     # print(corners)
         #     pts = get_four_corners_from_two_opposites(*corners)
@@ -90,7 +88,6 @@ def processed_frame_gen():
 
         grid_x, grid_y = (maze_thread.x_grids, maze_thread.y_grids) # x,y
         draw_grid(frame, grid_y, grid_x, x_offset=start_col, y_offset=start_row)
-        # cv2.rectangle(frame, (crop_amount_w//2+1, crop_amount_h//2+1), (w-crop_amount_w//2-1, h-crop_amount_h//2-1), (0,0,255), 2)
         
         # if x and y and r:
         #     cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
@@ -216,10 +213,16 @@ if __name__ == '__main__':
 
     # Camera Setup
     mode = 0
-    scale = 1
+    scale = 2
     resolution = (320*scale, 240*scale)
     crop_region = (min(resolution),)*2
-    pi_camera = VideoCamera(resolution, sensor_mode=mode, correction=True, crop_region=crop_region) # in a thread
+    pi_camera = VideoCamera(
+        resolution=resolution, 
+        sensor_mode=mode, 
+        correction=True, 
+        crop_region=crop_region, 
+        skew_fix=True
+    ) # in a thread
 
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread

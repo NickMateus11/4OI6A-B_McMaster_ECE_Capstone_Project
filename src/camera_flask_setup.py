@@ -1,11 +1,13 @@
 from imutils.video.pivideostream import PiVideoStream
 import cv2
+from threading import Thread
 import time
 import numpy as np
 
 from fisheye_calib import undistort, undistort2
 from colour_thresholding import locate_corners
 from skew_correction import four_point_transform
+from arUco import find_markers
 
 class VideoCamera(object):
     def __init__(self, resolution=(320,240), sensor_mode=0, flip=False, 
@@ -23,6 +25,7 @@ class VideoCamera(object):
         self.skew_fix = skew_fix
         self.lower_colour_bound = (0,128,0)
         self.upper_colour_bound = (100,255,100)
+        self.corners = []
 
         # Fisheye Params
         self.fisheye_correction = correction
@@ -38,31 +41,65 @@ class VideoCamera(object):
                 if D is None:
                     self.D=np.array([[-0.05759906030260242], [0.17803603968581097], [-0.31464705611716187], [0.1575447567212531]])
 
-        
         self.vs.start()
         time.sleep(2.0)
+        self.__get_latest_processed_frame()
+        self.start()
+
+    def start(self):
+        # start the thread to read frames from the video stream
+        t = Thread(target=self.update, args=())
+        t.daemon = True
+        t.start()
+        return self
+
+    def update(self):
+        while(True):
+            self.latest_processed_frame = self.__get_latest_processed_frame()
 
     def __del__(self):
         self.vs.stop()
+    
+    def get_latest_processed_frame(self, preserve_resolution=False):
+        frame = self.latest_processed_frame
+        if not preserve_resolution:
+            frame = cv2.resize(frame, (320, 240))
+        return frame
 
-    def get_latest_processed_frame(self):
+    def __get_latest_processed_frame(self):
         frame = self.get_latest_frame()
     
         if self.fisheye_correction:
             frame = undistort(frame, self.K, self.D, (frame.shape[1], frame.shape[0]))
         
-        if self.crop_region is not None:
+        if self.crop_region is not None: # wont need this once corner detect is implemented
             crop_amount_w = self.w - self.crop_region[0] 
             crop_amount_h = self.h - self.crop_region[1]
             frame = frame[0+crop_amount_h//2: self.h-crop_amount_h//2,
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
 
-        if self.skew_fix:
-            corners = locate_corners(frame, self.lower_colour_bound, self.upper_colour_bound)
-            if len(corners)==4:
-                frame = four_point_transform(frame, corners)
+        if self.skew_fix: # locate aruco corners here
+            # corners = locate_corners(frame, self.lower_colour_bound, self.upper_colour_bound)
+            corners, frame = find_markers(frame)
+            for new in corners:
+                for j in range(len(self.corners)):
+                    print(new[0])
+                    print(new[1])
+                    print(self.corners)
+                    if abs(new[0]-self.corners[j][0]) < self.w//3 and abs(new[1]-self.corners[j][1]) < self.h//3: # simple distance check
+                        self.corners[j] = new
+                        break
+                else: # add to self.corners if new corner
+                    if len(self.corners) != 4:
+                        self.corners.append(new)
+                # self.corners = np.array(corners)
+            print(self.corners)
+            if len(self.corners) == 4:
+                frame = four_point_transform(frame, np.array(self.corners))
+        
+        self.latest_processed_frame = frame
 
-        return frame
+        return self.latest_processed_frame.copy()
 
     def get_latest_frame(self):     
         return self.vs.read().copy()
