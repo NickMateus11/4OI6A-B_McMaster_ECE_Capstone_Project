@@ -63,8 +63,8 @@ class VideoCamera(object):
     
     def get_latest_processed_frame(self, preserve_resolution=False):
         frame = self.latest_processed_frame
-        # if not preserve_resolution:
-        #     frame = cv2.resize(frame, (240, 240))
+        if not preserve_resolution:
+            frame = cv2.resize(frame, (240, 240))
         return frame
 
     def __get_latest_processed_frame(self):

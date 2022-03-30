@@ -78,8 +78,8 @@ def draw_path(img, path, grid):
     spacing_x = x_dim/grid_x
 
     for grid_coord in path:
-        y_coord = int(grid_coord[0] * spacing_y + spacing_y/2)
-        x_coord = int(grid_coord[1] * spacing_x + spacing_x/2)
+        y_coord = int(grid_coord[1] * spacing_y + spacing_y/2)
+        x_coord = int(grid_coord[0] * spacing_x + spacing_x/2)
         cv2.circle(img, (x_coord, y_coord), int(
             min(spacing_x, spacing_y)/4), (0, 0, 255), -1)
 
