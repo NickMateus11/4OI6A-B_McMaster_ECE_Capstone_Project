@@ -15,7 +15,6 @@ class MazeThread:
 
 		self.x_grids = 8
 		self.y_grids = 8
-		self.wall_size = 4  # hard coded
 		self.sensitivity = 0.8
 		self.threshold = 30
 		self.blur = 3
@@ -24,11 +23,6 @@ class MazeThread:
 		self.c = 18
 		
 		self.video_stream = video_stream
-		
-		# img_name = "../images/maze_ball_trim.png"
-		# self.img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)  # input
-		# self.img = cv2.resize(self.img, (320, 240))
-		# cv2.imwrite("imput.png", self.img)
 
 		self.maze = None
 		self.ref_maze = None
@@ -90,32 +84,9 @@ class MazeThread:
 
 					self.ball_position = (cx, cy)
 
-				# _, crop_vals = trim_maze_edge(self.ref_maze) 
-
-				# # trim image to reflect how to maze is going to be processed - so ball tracking is accurate
-				# (start_col, end_col, start_row, end_row) = crop_vals
-
-				# # check if trim values are valid
-				# if (start_col<end_col and start_row<end_row):
-				# 	# self.ref_maze = self.ref_maze[start_row:end_row, start_col:end_col]
-				# 	trimmed_img = img[start_row:end_row, start_col:end_col]
-				# 	(x,y), r, mask = locate_ball(trimmed_img, (120,0,0), (255,255,255), convert_HSV=True)
-				# 	if (x and y):
-				# 		# cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
-				# 		# cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
-				# 		cx = int(x/trimmed_img.shape[1] * (self.x_grids)) * 2 + 1
-				# 		cy = int(y/trimmed_img.shape[0] * (self.y_grids)) * 2 + 1
-
-				# 		self.ball_position = (cx, cy)
-				# 	# self.maze[cy,cx,:] = (0,255,0)
-
-				# self.count += 1
-
 			# if the thread indicator variable is set, stop the thread
 			if self.stopped:
 				return
-			
-			# time.sleep(0.1) # maze computes faster than necessary - TODO: synchronize this better
 
 	def read_latest(self):
 		return self.maze.copy()
@@ -123,11 +94,15 @@ class MazeThread:
 	def get_scaled_maze(self, include_ball=True):
 		maze = cv2.cvtColor(self.read_latest()*255, cv2.COLOR_GRAY2BGR)
 		processed_h, processed_w = (min(self.video_stream.h, self.video_stream.w) , )*2
+
 		if include_ball and self.ball_position is not None:
 			maze[self.ball_position[1], self.ball_position[0],:] = (0,255,0) 
+
 		if self.target_cell is not None and list(maze[self.target_cell[1], self.target_cell[0],:]) != [0,0,0]:
 			maze[self.target_cell[1], self.target_cell[0],:] = (128,0,128) 
-		upscaled_maze = cv2.resize(maze, (processed_w, processed_h), interpolation=cv2.INTER_NEAREST)		
+
+		upscaled_maze = cv2.resize(maze, (processed_w, processed_h), interpolation=cv2.INTER_NEAREST)	
+			
 		return upscaled_maze
 
 	def get_ref_image(self):

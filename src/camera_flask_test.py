@@ -40,6 +40,7 @@ def index():
 	'setting_thresh':maze_thread.block,
 	'setting_sens':maze_thread.sensitivity*100
 	}
+    
     if request.method=='POST':
         blur = int(request.form['blur'])
         thresh = int(request.form['thresh'])
@@ -53,7 +54,8 @@ def index():
             'v_height':pi_camera.h,
             'setting_blur': blur,       
             'setting_thresh':thresh,
-            'setting_sens': sens*100 }
+            'setting_sens': sens*100 
+        }
     return render_template('index.html', **template_data)
 
 def frame_gen():
@@ -68,57 +70,28 @@ def processed_frame_gen():
     #get camera frame
     while True:
         frame = pi_camera.get_latest_processed_frame()
-        _, crop_vals = trim_maze_edge(maze_thread.get_ref_image()) 
-
-        # trim image to reflect how to maze is going to be processed - so ball tracking is accurate
-        (start_col, end_col, start_row, end_row) = crop_vals
-        frame = frame[start_row:end_row, start_col:end_col]
-
-        # (x,y), r, mask = locate_ball(frame, (120,0,0), (255,255,255), convert_HSV=True)
-        h,w = frame.shape[:2]
-
-        # corners, frame = find_markers(pi_camera.get_latest_processed_frame(preserve_resolution=True))
-        # if len(corners) == 4:
-        #     frame = four_point_transform(frame, np.array(corners))
-
-        # if (len(corners) == 2):
-        #     # print(corners)
-        #     pts = get_four_corners_from_two_opposites(*corners)
-        #     for p in pts:
-        #         cv2.circle(frame, (int(p[0]), int(p[1])), 4, (0,0,255), 3)
-        #     frame = four_point_transform(frame, pts)
-
-
-        grid_x, grid_y = (maze_thread.x_grids, maze_thread.y_grids) # x,y
-        draw_grid(frame, grid_y, grid_x, x_offset=start_col, y_offset=start_row)
-        
-        # if x and y and r:
-        #     cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
 
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 
-
 def maze_gen():
     #get maze frame
-    ball_coords = maze_thread.ball_position
-    new_ball_coords = None
+    ball_coords = None
+    path = None
     while True:
         frame = maze_thread.get_scaled_maze()
         new_ball_coords = maze_thread.ball_position
-        if maze_thread.ball_position:
-            if (new_ball_coords != ball_coords) and end_set:
-                solve_maze()
-            ball_coords = new_ball_coords
-        if path:
+        if maze_thread.ball_position and maze_thread.target_cell:
+            path = solve_maze()
             draw_path(frame, path, (maze_thread.y_grids*2+1, maze_thread.x_grids*2+1))
-        # display ball realtime
-        (x,y), r, mask = locate_ball(
-            pi_camera.get_latest_processed_frame(),
-            (120,0,0), (255,255,255), convert_HSV=True)
-        if x and y and r:
-            cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
+
+        # # display ball realtime
+        # (x,y), r, mask = locate_ball(
+        #     pi_camera.get_latest_processed_frame(),
+        #     (120,0,0), (255,255,255), convert_HSV=True)
+        # if x and y and r:
+        #     cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
 
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
@@ -129,6 +102,7 @@ def ref_gen():
     #get ref frame
     while True:
         frame = maze_thread.get_ref_image()
+
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
@@ -150,16 +124,6 @@ def maze_feed():
 def ref_feed():
     return Response(ref_gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/print_hello')
-def print_hello():
-    print("Start")
-    return json.dumps({"success": True}), 200
-
-@app.route('/print_test')
-def print_test():
-    print("Stop")
-    return json.dumps({"success": True}), 200
-
 @app.route('/capture')
 def capture():
     print(f"Saving Picture")
@@ -173,7 +137,6 @@ def capture():
 def calibrate():
     maze_thread.update_maze()
     return json.dumps({"success": True}), 200
-
 
 @app.route('/up')
 def up():
@@ -209,8 +172,6 @@ def right():
 
 @app.route('/grid_click', methods=['POST'])
 def grid_click():
-    global end_set 
-    end_set = True
     cell_num = int(json.loads(request.get_data())['cell'])
     
     x = cell_num%(maze_thread.x_grids * 2 + 1)
@@ -218,16 +179,16 @@ def grid_click():
     print(x, y)
 
     maze_thread.target_cell = (x,y)
-    solve_maze()
+
     return json.dumps({"success": True}), 200
 
 def solve_maze():
-    global path
     maze = maze_thread.maze.copy()
     for i in range(len(maze)):
         for j in range(len(maze[0])):
             maze[i][j] = int(not maze[i][j])
-    path = solve(maze,maze_thread.ball_position,maze_thread.target_cell)
+    path = solve(maze, maze_thread.ball_position, maze_thread.target_cell)
+    return path
 
 if __name__ == '__main__':
 
@@ -243,8 +204,7 @@ if __name__ == '__main__':
         crop_region=crop_region, 
         skew_fix=True
     ) # in a thread
-    path = []
-    end_set = False
+
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread
 

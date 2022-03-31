@@ -15,8 +15,7 @@ class VideoCamera(object):
     def __init__(self, resolution=(320,240), sensor_mode=0, flip=False, 
                 correction=False, K=None, D=None, 
                 skew_fix=False, 
-                crop_region=None,
-                ref=None):
+                crop_region=None):
 
         self.vs = PiVideoStream(resolution=resolution, 
                                 sensor_mode=sensor_mode)
@@ -26,10 +25,6 @@ class VideoCamera(object):
         self.crop_region = crop_region
 
         self.skew_fix = skew_fix
-        self.lower_colour_bound = (0,128,0)
-        self.upper_colour_bound = (100,255,100)
-        self.corners = []
-        self.ref_maze = None
 
         # Fisheye Params
         self.fisheye_correction = correction
@@ -64,10 +59,8 @@ class VideoCamera(object):
     def __del__(self):
         self.vs.stop()
     
-    def get_latest_processed_frame(self, preserve_resolution=False):
+    def get_latest_processed_frame(self):
         frame = self.latest_processed_frame.copy()
-        # if not preserve_resolution:
-        #     frame = cv2.resize(frame, (240, 240))
         return frame
 
     def __get_latest_processed_frame(self):
@@ -82,25 +75,21 @@ class VideoCamera(object):
             frame = frame[0+crop_amount_h//2: self.h-crop_amount_h//2,
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
 
-        if self.skew_fix and self.ref_maze is not None: # locate aruco corners here
+        if self.skew_fix:
             corners = locate_corners(frame, (31,8,103), (55,66,255), convert_HSV=True)
             if (len(corners)==4):
                 corner_pts = np.array([(x,y) for (x,y), r in corners])
                 corner_pts = order_points(corner_pts)
                 # small shift outwards
-                corner_pts[0  ] -= 20
-                corner_pts[2  ] += 20
-                corner_pts[1,0] += 20
-                corner_pts[1,1] -= 20
-                corner_pts[3,0] -= 20
-                corner_pts[3,1] += 20
+                shift = 20
+                corner_pts[0  ] -= shift
+                corner_pts[2  ] += shift
+                corner_pts[1,0] += shift
+                corner_pts[1,1] -= shift
+                corner_pts[3,0] -= shift
+                corner_pts[3,1] += shift
 
                 frame = four_point_transform(frame, corner_pts)
-
-        # if self.ref_maze is not None and self.ref_maze.get_ref_image() is not None:
-        #     _, crop_vals = trim_maze_edge(self.ref_maze.get_ref_image()) 
-        #     (start_col, end_col, start_row, end_row) = crop_vals
-        #     frame = frame[start_row:end_row, start_col:end_col]
         
         self.latest_processed_frame = frame
 
