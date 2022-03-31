@@ -21,8 +21,8 @@ from image_test import maze_compression
 from click_test import draw_path 
 
 import servotest # instantiates pwm
-from servotest import smooth_rotate
-from servotest import MAX_ADJUSTED, MIN_ADJUSTED, SERVO_PIN_1
+from servotest import smooth_rotate, current_pwm, initilizePWM, releasePWM
+from servotest import SERVO_PIN_1, SERVO_PIN_2, BIAS1, BIAS2, MAX_ADJUSTED, MIN_ADJUSTED
 
 
 # Flask App
@@ -152,33 +152,45 @@ def calibrate():
 
 @app.route('/up')
 def up():
+    global pwm1
     print("up")
     print("0 deg")
-    smooth_rotate(SERVO_PIN_1, MAX_ADJUSTED)
+    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
+    releasePWM(SERVO_PIN_1)
     # pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
     return json.dumps({"success": True}), 200
 
 @app.route('/down')
 def down():
+    global pwm1
     print("down")
     print("90 deg")
-    smooth_rotate(SERVO_PIN_1, MIN_ADJUSTED)
+    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
+    releasePWM(SERVO_PIN_1)
     # pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
     return json.dumps({"success": True}), 200
 
 @app.route('/left')
 def left():
+    global pwm2
     print("left")
     print("90 deg")
-    smooth_rotate(SERVO_PIN_1, MAX_ADJUSTED)
+    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
+    releasePWM(SERVO_PIN_2)
     # pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
     return json.dumps({"success": True}), 200
 
 @app.route('/right')
 def right():
+    global pwm2
     print("right")
     print("0 deg")
-    smooth_rotate(SERVO_PIN_1, MIN_ADJUSTED)
+    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
+    releasePWM(SERVO_PIN_2)
     # pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
     return json.dumps({"success": True}), 200
 
@@ -217,6 +229,14 @@ if __name__ == '__main__':
 
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread
+
+    # initialize servos
+    pwm1 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
+    pwm2 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
+    initilizePWM(SERVO_PIN_1, pwm1 , BIAS1)
+    initilizePWM(SERVO_PIN_2, pwm2 , BIAS2)
+    releasePWM(SERVO_PIN_1)
+    releasePWM(SERVO_PIN_2)
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
