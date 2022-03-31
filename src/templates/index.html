@@ -2,57 +2,54 @@
 <html>
   <head>
     <title>Raspberry Pi - Surveillance Camera</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   </head>
 
   <body>
-    <center><h1>Raspberry Pi - Surveillance Camera</h1></center>
-    
-    <center>
+    <h1>Raspberry Pi - Surveillance Camera</h1>
+    <div class="feed_settings">
+    <div class="datafeeds">
       <img src="video_feed" width="{{ v_width }}" height="{{ v_height }}">
       <img src="processed_feed" width="{{ p_width }}" height="{{ p_height }}">
-      <img src="ref_feed" width="{{ p_width }}" height="{{ p_height }}"> 
+      <img src="ref_feed" width="{{ p_width }}" height="{{ p_height }}">
+      <table width="{{ p_width }}" height="{{ p_height }}" background="maze_feed" border="1" cellspacing="0" cellpadding="0" style="table-layout:fixed; background-repeat: no-repeat">
+        {%for i in range(0, 17)%}
+          <tr>
+          {%for j in range(0, 17)%}
+            <td class='clickable-cell' id="{{ i*17 + j }}"></td>
+          {%endfor%}
+          </tr>
+        {%endfor%}
+      </table> 
       <img src="maze_feed" width="{{ p_width }}" height="{{ p_height }}">
-    </center>
-    
-    <center>
+    </div>
+    <div class="settings">
+      <form method="post">
+            <label for="Settings">Settings</label>
+            <br>
+                <p>Blur: <span id="blur"></span> </p>
+                <input type="range" min="1" max="100" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
+                <p>Threshold: <span id="thresh"></span> </p>
+                <input type="range" min="1" max="100" value="{{setting_thresh}}" class="slider" id="threshRange"  name="thresh"></input>
+                <p>Sensitivity: <span id="sens"></span>% </p>
+                <input type="range" min="0" max="100" value="{{setting_sens}}" class="slider" id="sensRange"  name="sens"></input>
+            <br>
+            <button type="submit" id="PAYLOAD">Submit</button>
+      </form>
+    </div>
+    </div>
+    <div class="options">
         <a href=# id=START><button>START</button></a>
         <a href=# id=CALIBRATE><button>CALIBRATE</button></a>
         <a href=# id=STOP><button>STOP</button></a>
-    </center>
-    <center>
+ 	<a href="capture" id=CAPTURE><button>SAVE</button></a>
+    </div>
+    <div class="controls">
         <a href=# id=UP><button>UP</button></a>
         <a href=# id=DOWN><button>DOWN</button></a>
         <a href=# id=LEFT><button>LEFT</button></a>
         <a href=# id=RIGHT><button>RIGHT</button></a>
-    </center>
-    <center>
-        <a href="capture" id=CAPTURE><button>SAVE</button></a>
-    </center>
-    <br>
-    <center>
-      <form method="post">
-	    <label for="Settings">Settings</label>
-	    <br>
-      <p>Blur: <span id="blur"></span> </p>
-	        <input type="range" min="1" max="100" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
-	    <p>Threshold: <span id="thresh"></span> </p>
-          <input type="range" min="1" max="100" value="{{setting_thresh}}" class="slider" id="threshRange"  name="thresh"></input>
-      <p>Sensitivity: <span id="sens"></span>% </p>
-          <input type="range" min="0" max="100" value="{{setting_sens}}" class="slider" id="sensRange"  name="sens"></input>
-	    <br> 
-      <button type="submit" id="PAYLOAD">Submit</button>
-      </form>
-   </center> 
-
-    <table width="{{ p_width }}" height="{{ p_height }}" background="maze_feed" border="1" cellspacing="0" cellpadding="0" style="table-layout:fixed; background-repeat: no-repeat">
-      {%for i in range(0, 17)%}
-        <tr>         
-        {%for j in range(0, 17)%}
-          <td class='clickable-cell' id="{{ i*17 + j }}"></td>
-        {%endfor%}
-        </tr>
-      {%endfor%}
-    </table>
+    </div>
   </body>
 
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>

@@ -1,0 +1,25 @@
+*,
+*::before,
+*::after{
+	box-sizing:border-box; 
+}
+body {
+	background: #EEFFFF ; 
+	border: 1px solid black;
+	padding: 0; 
+	margin: 8px;  
+}
+
+.feed_settings {
+        display: flex; 
+}
+
+.datafeeds{
+	width: 80%; 
+}
+
+.settings {
+        border: 1px solid black;
+	width: 20%;  
+}
+
