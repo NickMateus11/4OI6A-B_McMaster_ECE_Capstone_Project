@@ -77,21 +77,13 @@ def processed_frame_gen():
 
 def maze_gen():
     #get maze frame
-    ball_coords = None
     path = None
     while True:
         frame = maze_thread.get_scaled_maze()
-        new_ball_coords = maze_thread.ball_position
         if maze_thread.ball_position and maze_thread.target_cell:
             path = solve_maze()
-            draw_path(frame, path, (maze_thread.y_grids*2+1, maze_thread.x_grids*2+1))
-
-        # # display ball realtime
-        # (x,y), r, mask = locate_ball(
-        #     pi_camera.get_latest_processed_frame(),
-        #     (120,0,0), (255,255,255), convert_HSV=True)
-        # if x and y and r:
-        #     cv2.circle(frame, (int(x),int(y)), int(r), (0,255,0), thickness=-1)
+            if path is not None:
+                draw_path(frame, path, (maze_thread.x_grids*2+1, maze_thread.y_grids*2+1))
 
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
@@ -176,19 +168,17 @@ def grid_click():
     
     x = cell_num%(maze_thread.x_grids * 2 + 1)
     y = cell_num//(maze_thread.y_grids * 2 + 1)
-    print(x, y)
 
     maze_thread.target_cell = (x,y)
 
     return json.dumps({"success": True}), 200
 
 def solve_maze():
-    maze = maze_thread.maze.copy()
-    for i in range(len(maze)):
+    maze = maze_thread.read_latest()
+    for i in range(len(maze)): # switch 1s and 0s (convention)
         for j in range(len(maze[0])):
             maze[i][j] = int(not maze[i][j])
-    path = solve(maze, maze_thread.ball_position, maze_thread.target_cell)
-    return path
+    return solve(maze, maze_thread.ball_position[::-1], maze_thread.target_cell[::-1])
 
 if __name__ == '__main__':
 
@@ -207,8 +197,6 @@ if __name__ == '__main__':
 
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread
-
-    pi_camera.ref_maze = maze_thread # give maze object to camera thread
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available

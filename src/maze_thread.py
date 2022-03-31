@@ -102,7 +102,7 @@ class MazeThread:
 			maze[self.target_cell[1], self.target_cell[0],:] = (128,0,128) 
 
 		upscaled_maze = cv2.resize(maze, (processed_w, processed_h), interpolation=cv2.INTER_NEAREST)	
-			
+
 		return upscaled_maze
 
 	def get_ref_image(self):

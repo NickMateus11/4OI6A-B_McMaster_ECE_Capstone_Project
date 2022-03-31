@@ -28,6 +28,9 @@ def solve(a, start, end):
   while m[end[0]][end[1]] == 0:
       k += 1
       make_step(k, m, a)
+      if k > 300:
+        print("solve failed")
+        return None # failed
 
   i, j = end
   k = m[i][j]
@@ -51,9 +54,9 @@ def solve(a, start, end):
       k -= 1
   return the_path
 
-images = []
 
 def main():
+  images = []
   # load numpy array (and switch convention - walls=1 empty=0)
   a = np.load('maze_small.npy').astype(int)
   a = a.tolist()
