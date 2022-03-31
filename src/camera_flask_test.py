@@ -71,6 +71,26 @@ def processed_frame_gen():
     while True:
         frame = pi_camera.get_latest_processed_frame()
 
+        corners = pi_camera.avg_corner_pts
+        for c in corners:
+            cv2.circle(frame, tuple(c), 5, (0,255,0), thickness=-1)
+
+        # f = pi_camera.get_corner_mask()
+        # cnts = cv2.findContours(f, cv2.RETR_TREE,
+        #                 cv2.CHAIN_APPROX_SIMPLE)[1]
+        # cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
+    
+        # for c in cnts[:4]:
+        #     area = cv2.contourArea(c) 
+        #     # print(area)
+        #     # if area < 10: # likely not what we are looking for
+        #     #     break
+        # else:
+        #     cnts =  [cv2.minEnclosingCircle(cnt) for cnt in cnts[:4]]
+        #     for (x,y),r in cnts:
+        #         frame = cv2.circle(frame, (int(x), int(y)), int(r), (0,0,255), thickness=2)
+        #         frame[:,:,1] = frame[:,:,1]+f
+
         _, jpeg = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')

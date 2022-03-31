@@ -10,11 +10,13 @@ import numpy as np
 from image_test import maze_compression
 
 
-def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False):
-    # frame_blur = cv2.blur(frame, (5,5))
+def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False, return_frame=False):
     if convert_HSV:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(frame, lower_bound, upper_bound)
+    # mask = cv2.blur(mask, (15,15))
+    if return_frame:
+        return mask
 
     # old opencv version
     if cv2.__version__[0] == '3':
@@ -25,10 +27,12 @@ def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False):
                                 cv2.CHAIN_APPROX_SIMPLE)[0]
 
     cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
+    
     for c in cnts[:4]:
         area = cv2.contourArea(c) 
-        if area < 10 or area > 750: # likely not what we are looking for
-            break
+        # print(area)
+        # if area < 10: # likely not what we are looking for
+        #     break
     else:
         return [cv2.minEnclosingCircle(cnt) for cnt in cnts[:4]]
     
