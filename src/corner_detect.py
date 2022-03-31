@@ -20,16 +20,19 @@ def getCorners(img, img2, block_size=10, ksize=3, k=0.04):
     #     y = int(c[1])
     #     cv2.circle(img2, (x,y), 4, (0,255,0), thickness=-1)
     
-    hull = ConvexHull(centroids)
-    vertices = np.int32(centroids[hull.vertices])
-    
-    # img = cv2.polylines(img2, [vertices], True, (0,255,0), thickness=3)
+    if len(centroids) > 2:
+        hull = ConvexHull(centroids)
+        vertices = np.int32(centroids[hull.vertices])
+        
+        # img = cv2.polylines(img2, [vertices], True, (0,255,0), thickness=3)
 
-    epsilon = 0.1*cv2.arcLength(vertices,True)
-    approx = cv2.approxPolyDP(vertices,epsilon,True)
-    # cv2.drawContours(img2, [approx], 0, (255,0,0), 1)
+        epsilon = 0.1*cv2.arcLength(vertices,True)
+        approx = cv2.approxPolyDP(vertices,epsilon,True)
+        # cv2.drawContours(img2, [approx], 0, (255,0,0), 1)
 
-    return approx
+        return np.reshape(approx, (len(approx),2))
+
+    return np.array([])
 
 def test1():
     filename = '../images/corners.png'

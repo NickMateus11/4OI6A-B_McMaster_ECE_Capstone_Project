@@ -6,6 +6,7 @@
 '''
 
 import cv2
+import numpy as np
 from image_test import maze_compression
 
 
@@ -24,13 +25,18 @@ def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False):
                                 cv2.CHAIN_APPROX_SIMPLE)[0]
 
     cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
-    corners = [cv2.minEnclosingCircle(cnt) for cnt in cnts[:4]]
-
-    cv2.drawContours(frame, cnts[:4], -1, (0, 0, 255), 2)
+    for c in cnts[:4]:
+        area = cv2.contourArea(c) 
+        if area < 10 or area > 750: # likely not what we are looking for
+            break
+    else:
+        return [cv2.minEnclosingCircle(cnt) for cnt in cnts[:4]]
+    
+    # cv2.drawContours(frame, cnts[:4], -1, (0, 0, 255), 2)
     # cv2.imshow("masked", frame)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    return corners
+    return np.array([])
 
 
 def locate_ball(frame, lower_bound, upper_bound, convert_HSV=False):

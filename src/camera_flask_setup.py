@@ -6,15 +6,17 @@ import numpy as np
 
 from fisheye_calib import undistort, undistort2
 from colour_thresholding import locate_corners
-from skew_correction import four_point_transform
+from skew_correction import four_point_transform, order_points
 from arUco import find_markers
 from corner_detect import getCorners
+from image_utils import trim_maze_edge
 
 class VideoCamera(object):
     def __init__(self, resolution=(320,240), sensor_mode=0, flip=False, 
                 correction=False, K=None, D=None, 
                 skew_fix=False, 
-                crop_region=None):
+                crop_region=None,
+                ref=None):
 
         self.vs = PiVideoStream(resolution=resolution, 
                                 sensor_mode=sensor_mode)
@@ -27,6 +29,7 @@ class VideoCamera(object):
         self.lower_colour_bound = (0,128,0)
         self.upper_colour_bound = (100,255,100)
         self.corners = []
+        self.ref_maze = None
 
         # Fisheye Params
         self.fisheye_correction = correction
@@ -56,15 +59,15 @@ class VideoCamera(object):
 
     def update(self):
         while(True):
-            self.latest_processed_frame = self.__get_latest_processed_frame()
+            self.__get_latest_processed_frame()
 
     def __del__(self):
         self.vs.stop()
     
     def get_latest_processed_frame(self, preserve_resolution=False):
-        frame = self.latest_processed_frame
-        if not preserve_resolution:
-            frame = cv2.resize(frame, (240, 240))
+        frame = self.latest_processed_frame.copy()
+        # if not preserve_resolution:
+        #     frame = cv2.resize(frame, (240, 240))
         return frame
 
     def __get_latest_processed_frame(self):
@@ -79,20 +82,28 @@ class VideoCamera(object):
             frame = frame[0+crop_amount_h//2: self.h-crop_amount_h//2,
                           0+crop_amount_w//2: self.w-crop_amount_w//2]
 
-        if self.skew_fix: # locate aruco corners here
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # corners = getCorners(gray, frame)
-            # if len(corners)==4:
-            #     for c in corners:
-            #         x = int(c[0])
-            #         y = int(c[1])
-            #         cv2.circle(frame, (x,y), 5, (0,255,0), thickness=-1)
-            #     frame = four_point_transform(frame, np.array(self.corners))
-            #     print(corners)
+        if self.skew_fix and self.ref_maze is not None: # locate aruco corners here
+            corners = locate_corners(frame, (31,8,103), (55,66,255), convert_HSV=True)
+            if (len(corners)==4):
+                corner_pts = np.array([(x,y) for (x,y), r in corners])
+                corner_pts = order_points(corner_pts)
+                # small shift outwards
+                corner_pts[0  ] -= 20
+                corner_pts[2  ] += 20
+                corner_pts[1,0] += 20
+                corner_pts[1,1] -= 20
+                corner_pts[3,0] -= 20
+                corner_pts[3,1] += 20
+
+                frame = four_point_transform(frame, corner_pts)
+
+        # if self.ref_maze is not None and self.ref_maze.get_ref_image() is not None:
+        #     _, crop_vals = trim_maze_edge(self.ref_maze.get_ref_image()) 
+        #     (start_col, end_col, start_row, end_row) = crop_vals
+        #     frame = frame[start_row:end_row, start_col:end_col]
         
         self.latest_processed_frame = frame
 
-        return self.latest_processed_frame.copy()
 
     def get_latest_frame(self):     
         return self.vs.read().copy()

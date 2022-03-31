@@ -72,7 +72,7 @@ def processed_frame_gen():
 
         # trim image to reflect how to maze is going to be processed - so ball tracking is accurate
         (start_col, end_col, start_row, end_row) = crop_vals
-        # frame = frame[start_row:end_row, start_col:end_col]
+        frame = frame[start_row:end_row, start_col:end_col]
 
         # (x,y), r, mask = locate_ball(frame, (120,0,0), (255,255,255), convert_HSV=True)
         h,w = frame.shape[:2]
@@ -247,6 +247,8 @@ if __name__ == '__main__':
     end_set = False
     # start maze thread
     maze_thread = MazeThread(pi_camera) # in a thread
+
+    pi_camera.ref_maze = maze_thread # give maze object to camera thread
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available

@@ -82,23 +82,32 @@ class MazeThread:
 				}
 				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 				self.ref_maze = preprocess_image(gray_img, **preprocess)
-				_, crop_vals = trim_maze_edge(self.ref_maze) 
 
-				# trim image to reflect how to maze is going to be processed - so ball tracking is accurate
-				(start_col, end_col, start_row, end_row) = crop_vals
+				(x,y), r, mask = locate_ball(img, (120,0,0), (255,255,255), convert_HSV=True)
+				if (x and y):
+					cx = int(x/img.shape[1] * (self.x_grids)) * 2 + 1
+					cy = int(y/img.shape[0] * (self.y_grids)) * 2 + 1
 
-				# check if trim values are valid
-				if (start_col<end_col and start_row<end_row):
-					trimmed_img = img[start_row:end_row, start_col:end_col]
-					(x,y), r, mask = locate_ball(trimmed_img, (120,0,0), (255,255,255), convert_HSV=True)
-					if (x and y):
-						# cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
-						# cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
-						cx = int(x/trimmed_img.shape[1] * (self.x_grids)) * 2 + 1
-						cy = int(y/trimmed_img.shape[0] * (self.y_grids)) * 2 + 1
+					self.ball_position = (cx, cy)
 
-						self.ball_position = (cx, cy)
-					# self.maze[cy,cx,:] = (0,255,0)
+				# _, crop_vals = trim_maze_edge(self.ref_maze) 
+
+				# # trim image to reflect how to maze is going to be processed - so ball tracking is accurate
+				# (start_col, end_col, start_row, end_row) = crop_vals
+
+				# # check if trim values are valid
+				# if (start_col<end_col and start_row<end_row):
+				# 	# self.ref_maze = self.ref_maze[start_row:end_row, start_col:end_col]
+				# 	trimmed_img = img[start_row:end_row, start_col:end_col]
+				# 	(x,y), r, mask = locate_ball(trimmed_img, (120,0,0), (255,255,255), convert_HSV=True)
+				# 	if (x and y):
+				# 		# cx = int(x/img.shape[1] * (self.x_grids*2 + 1))
+				# 		# cy = int(y/img.shape[0] * (self.y_grids*2 + 1))
+				# 		cx = int(x/trimmed_img.shape[1] * (self.x_grids)) * 2 + 1
+				# 		cy = int(y/trimmed_img.shape[0] * (self.y_grids)) * 2 + 1
+
+				# 		self.ball_position = (cx, cy)
+				# 	# self.maze[cy,cx,:] = (0,255,0)
 
 				# self.count += 1
 
@@ -113,7 +122,7 @@ class MazeThread:
 	
 	def get_scaled_maze(self, include_ball=True):
 		maze = cv2.cvtColor(self.read_latest()*255, cv2.COLOR_GRAY2BGR)
-		processed_h, processed_w = self.video_stream.get_latest_processed_frame().shape[:2]
+		processed_h, processed_w = (min(self.video_stream.h, self.video_stream.w) , )*2
 		if include_ball and self.ball_position is not None:
 			maze[self.ball_position[1], self.ball_position[0],:] = (0,255,0) 
 		if self.target_cell is not None and list(maze[self.target_cell[1], self.target_cell[0],:]) != [0,0,0]:
@@ -122,7 +131,8 @@ class MazeThread:
 		return upscaled_maze
 
 	def get_ref_image(self):
-		return self.ref_maze.copy()
+		if self.ref_maze is not None:
+			return self.ref_maze.copy()
 
 	def stop(self):
 		self.stopped = True
