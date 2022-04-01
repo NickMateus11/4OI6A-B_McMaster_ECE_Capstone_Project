@@ -14,7 +14,8 @@ def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False, return_fr
     if convert_HSV:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(frame, lower_bound, upper_bound)
-    # mask = cv2.blur(mask, (15,15))
+    # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+    # mask = cv2.erode(mask, kernel)
     if return_frame:
         return mask
 

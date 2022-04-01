@@ -233,10 +233,10 @@ if __name__ == '__main__':
     # initialize servos
     pwm1 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
     pwm2 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
-    initilizePWM(SERVO_PIN_1, pwm1 , BIAS1)
-    initilizePWM(SERVO_PIN_2, pwm2 , BIAS2)
-    releasePWM(SERVO_PIN_1)
-    releasePWM(SERVO_PIN_2)
+    # initilizePWM(SERVO_PIN_1, pwm1 , BIAS1)
+    # initilizePWM(SERVO_PIN_2, pwm2 , BIAS2)
+    # releasePWM(SERVO_PIN_1)
+    # releasePWM(SERVO_PIN_2)
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
