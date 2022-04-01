@@ -24,8 +24,9 @@
       <img src="maze_feed" width="{{ p_width }}" height="{{ p_height }}">
     </div>
     <div class="settings">
+      <div class="sliders">
+      <h2> Settings </h2>
       <form method="post">
-            <label for="Settings">Settings</label>
             <br>
                 <p>Blur: <span id="blur"></span> </p>
                 <input type="range" min="1" max="100" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
@@ -36,19 +37,22 @@
             <br>
             <button type="submit" id="PAYLOAD">Submit</button>
       </form>
+      </div> 
+      <div class="options">
+	  <h2> Options </h2>
+          <a href=# id=START><button>START</button></a>
+          <a href=# id=CALIBRATE><button>CALIBRATE</button></a>
+          <a href=# id=STOP><button>STOP</button></a>
+          <a href="capture" id=CAPTURE><button>SAVE</button></a>
+      </div>
+      <div class="controls">
+          <h2> Manual Controls </h2> 
+          <a href=# id=UP><button>UP</button></a>
+          <a href=# id=DOWN><button>DOWN</button></a>
+          <a href=# id=LEFT><button>LEFT</button></a>
+          <a href=# id=RIGHT><button>RIGHT</button></a>
+      </div>
     </div>
-    </div>
-    <div class="options">
-        <a href=# id=START><button>START</button></a>
-        <a href=# id=CALIBRATE><button>CALIBRATE</button></a>
-        <a href=# id=STOP><button>STOP</button></a>
- 	<a href="capture" id=CAPTURE><button>SAVE</button></a>
-    </div>
-    <div class="controls">
-        <a href=# id=UP><button>UP</button></a>
-        <a href=# id=DOWN><button>DOWN</button></a>
-        <a href=# id=LEFT><button>LEFT</button></a>
-        <a href=# id=RIGHT><button>RIGHT</button></a>
     </div>
   </body>
 
