@@ -9,7 +9,7 @@ import pigpio
 import io
 import cv2
 import numpy as np
-
+import atexit
 
 from maze_thread import MazeThread 
 from image_utils import draw_grid, trim_maze_edge
@@ -212,6 +212,15 @@ def solve_maze():
             maze[i][j] = int(not maze[i][j])
     return solve(maze, maze_thread.ball_position[::-1], maze_thread.target_cell[::-1])
 
+def servo_cleanup():
+    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
+    releasePWM(SERVO_PIN_1)
+
+    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+    smooth_rotate(SERVO_PIN_2, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS2)
+    releasePWM(SERVO_PIN_2)
+
 if __name__ == '__main__':
 
     # Camera Setup
@@ -233,10 +242,9 @@ if __name__ == '__main__':
     # initialize servos
     pwm1 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
     pwm2 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
-    # initilizePWM(SERVO_PIN_1, pwm1 , BIAS1)
-    # initilizePWM(SERVO_PIN_2, pwm2 , BIAS2)
-    # releasePWM(SERVO_PIN_1)
-    # releasePWM(SERVO_PIN_2)
+
+    # ensure servo cleanup on app exit
+    atexit.register(servo_cleanup)
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
