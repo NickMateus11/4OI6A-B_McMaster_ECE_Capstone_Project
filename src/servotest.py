@@ -68,7 +68,7 @@ def smooth_rotate(gpio, target, step_size=20, delay=0.1, bias=0):
     
     # check if stepping was exact - or if value needs to be updated one last time
     if (current_pwm(gpio, bias) != target):
-        print(val)
+        print(target)
         pwm.set_servo_pulsewidth(gpio, target+bias)
     
     return current_pwm(gpio, bias)

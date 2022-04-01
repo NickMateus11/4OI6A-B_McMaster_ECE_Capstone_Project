@@ -90,7 +90,7 @@ class VideoCamera(object):
                 corner_pts = np.array([(x,y) for (x,y), r in corners])
                 corner_pts = order_points(corner_pts)
                 # small shift outwards
-                shift = 20
+                shift = 15
                 corner_pts[0  ] -= shift if min(corner_pts[0])  > shift else 0
                 corner_pts[2  ] += shift if max(corner_pts[2])  < min(self.w, self.h)-shift else 0
                 corner_pts[1,0] += shift if corner_pts[1,0]     < min(self.w, self.h)-shift else 0
@@ -107,8 +107,8 @@ class VideoCamera(object):
                     self.corner_pts_lookback.append(corner_pts)
                     self.avg_corner_pts = np.average(np.array(self.corner_pts_lookback), axis=0)
             
-            # if len(self.avg_corner_pts) == 4:
-            #     frame = four_point_transform(frame, self.avg_corner_pts)
+            if len(self.avg_corner_pts) == 4:
+                frame = four_point_transform(frame, self.avg_corner_pts)
         
         self.latest_processed_frame = frame
 

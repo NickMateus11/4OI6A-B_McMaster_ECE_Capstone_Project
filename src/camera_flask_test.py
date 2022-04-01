@@ -154,7 +154,6 @@ def calibrate():
 def up():
     global pwm1
     print("up")
-    print("0 deg")
     initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
     pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
@@ -165,18 +164,31 @@ def up():
 def down():
     global pwm1
     print("down")
-    print("90 deg")
     initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
     pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
     # pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
     return json.dumps({"success": True}), 200
 
+@app.route('/center')
+def center():
+    global pwm1, pwm2
+    print("center")
+
+    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    pwm1 = smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
+    releasePWM(SERVO_PIN_1)
+
+    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+    pwm2 = smooth_rotate(SERVO_PIN_2, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS2)
+    releasePWM(SERVO_PIN_2)
+
+    return json.dumps({"success": True}), 200
+
 @app.route('/left')
 def left():
     global pwm2
     print("left")
-    print("90 deg")
     initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
     pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
     releasePWM(SERVO_PIN_2)
@@ -187,7 +199,6 @@ def left():
 def right():
     global pwm2
     print("right")
-    print("0 deg")
     initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
     pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
     releasePWM(SERVO_PIN_2)

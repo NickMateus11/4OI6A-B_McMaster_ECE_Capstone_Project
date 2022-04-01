@@ -41,6 +41,14 @@ jQuery(document).ready(function($) {
         return false;
     });
 
+    $('#CENTER').bind('click', function() {
+        $.getJSON('/center',
+            function(data) {
+        //do nothing
+        });
+        return false;
+    });
+
 
     $('#LEFT').bind('click', function() {
         $.getJSON('/left',
