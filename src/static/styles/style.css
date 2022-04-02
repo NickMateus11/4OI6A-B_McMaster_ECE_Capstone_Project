@@ -29,11 +29,17 @@ img {
 
 .datafeeds{
 	width: 80%; 
-	margin-left: 10px; 
+	margin-left: 10px;
+	text-align: center; 
+	justify-content: center;  
 }
 
 table {
-	margin-bottom: 10px; 
+	margin: 0 auto; 
+}
+
+.clickable-cell:hover {
+	background:rgba(171,205,239,0.2);
 }
 
 .settings {
