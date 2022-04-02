@@ -2,7 +2,7 @@
 // Script to handle button presses WITHOUT redirection
 jQuery(document).ready(function($) {
     $('#START').bind('click', function() {
-        $.getJSON('/print_hello',
+        $.getJSON('/start',
             function(data) {
         //do nothing
         });
@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
     });
 
     $('#STOP').bind('click', function() {
-        $.getJSON('/print_test',
+        $.getJSON('/stop',
             function(data) {
         //do nothing
         });

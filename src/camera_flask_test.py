@@ -146,6 +146,16 @@ def capture():
     bytes_img = io.BytesIO(im_buf_arr.tobytes())
     return send_file(bytes_img, as_attachment=True, download_name="pi_camera_capture.jpg")
 
+@app.route('/start')
+def start():
+    control_mode = 1
+    return json.dumps({"success": True}), 200
+
+@app.route('/stop')
+def start():
+    control_mode = 0
+    return json.dumps({"success": True}), 200
+
 @app.route('/calibrate')
 def calibrate():
     maze_thread.update_maze()
@@ -158,53 +168,58 @@ def reset():
 
 @app.route('/up')
 def up():
-    global pwm1
-    print("up")
-    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-50, bias=BIAS1)
-    releasePWM(SERVO_PIN_1)
+    if control_mode == 0:
+        global pwm1
+        print("up")
+        initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+        pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-50, bias=BIAS1)
+        releasePWM(SERVO_PIN_1)
     return json.dumps({"success": True}), 200
 
 @app.route('/down')
 def down():
-    global pwm1
-    print("down")
-    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+50, bias=BIAS1)
-    releasePWM(SERVO_PIN_1)
+    if control_mode == 0:
+        global pwm1
+        print("down")
+        initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+        pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+50, bias=BIAS1)
+        releasePWM(SERVO_PIN_1)
     return json.dumps({"success": True}), 200
 
 @app.route('/center')
 def center():
-    global pwm1, pwm2
-    print("center")
+    if control_mode == 0:
+        global pwm1, pwm2
+        print("center")
 
-    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-    pwm1 = smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
-    releasePWM(SERVO_PIN_1)
+        initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+        pwm1 = smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
+        releasePWM(SERVO_PIN_1)
 
-    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-    pwm2 = smooth_rotate(SERVO_PIN_2, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS2)
-    releasePWM(SERVO_PIN_2)
+        initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+        pwm2 = smooth_rotate(SERVO_PIN_2, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS2)
+        releasePWM(SERVO_PIN_2)
 
     return json.dumps({"success": True}), 200
 
 @app.route('/left')
 def left():
-    global pwm2
-    print("left")
-    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-50, bias=BIAS2)
-    releasePWM(SERVO_PIN_2)
+    if control_mode == 0:
+        global pwm2
+        print("left")
+        initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+        pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-50, bias=BIAS2)
+        releasePWM(SERVO_PIN_2)
     return json.dumps({"success": True}), 200
 
 @app.route('/right')
 def right():
-    global pwm2
-    print("right")
-    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+50, bias=BIAS2)
-    releasePWM(SERVO_PIN_2)
+    if control_mode == 0:
+        global pwm2
+        print("right")
+        initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+        pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+50, bias=BIAS2)
+        releasePWM(SERVO_PIN_2)
     return json.dumps({"success": True}), 200
 
 @app.route('/grid_click', methods=['POST'])
@@ -246,26 +261,27 @@ def solve_maze():
 
         # print(merged_command)
         # TODO: cleanup this into functions
-        global pwm1, pwm2
-        if merged_command[0] == 'left':
-            initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-            pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
-            releasePWM(SERVO_PIN_2)
+        if control_mode == 1:
+            global pwm1, pwm2
+            if merged_command[0] == 'left':
+                initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+                pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
+                releasePWM(SERVO_PIN_2)
 
-        elif merged_command[0] == 'right':
-            initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-            pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
-            releasePWM(SERVO_PIN_2)
-        
-        if merged_command[1] == 'up':
-            initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-            pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
-            releasePWM(SERVO_PIN_1)
+            elif merged_command[0] == 'right':
+                initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+                pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
+                releasePWM(SERVO_PIN_2)
             
-        elif merged_command[1] == 'down':
-            initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-            pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
-            releasePWM(SERVO_PIN_1)
+            if merged_command[1] == 'up':
+                initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+                pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
+                releasePWM(SERVO_PIN_1)
+                
+            elif merged_command[1] == 'down':
+                initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+                pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
+                releasePWM(SERVO_PIN_1)
     
     return path
 
@@ -281,13 +297,13 @@ def servo_cleanup():
 if __name__ == '__main__':
 
     # Camera Setup
-    mode = 0
+    camera_mode = 0
     scale = 1
     resolution = (320*scale, 240*scale)
     crop_region = (min(resolution),)*2
     pi_camera = VideoCamera(
         resolution=resolution, 
-        sensor_mode=mode, 
+        sensor_mode=camera_mode, 
         correction=True, 
         crop_region=crop_region, 
         skew_fix=True
@@ -304,6 +320,9 @@ if __name__ == '__main__':
 
     # ensure servo cleanup on app exit
     atexit.register(servo_cleanup)
+
+    # control mode (0:manual, 1:auto)
+    control_mode = 0
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available
