@@ -35,23 +35,25 @@
                 <p>Sensitivity: <span id="sens"></span>% </p>
                 <input type="range" min="0" max="100" value="{{setting_sens}}" class="slider" id="sensRange"  name="sens"></input>
             <br>
-            <button type="submit" id="PAYLOAD">Submit</button>
+            <a href=# id=PAYLOAD><div class="button">Submit</div></a>
       </form>
       </div> 
       <div class="options">
 	  <h2> Options </h2>
-          <a href=# id=START><button>START</button></a>
-          <a href=# id=CALIBRATE><button>CALIBRATE</button></a>
-          <a href=# id=STOP><button>STOP</button></a>
-          <a href="capture" id=CAPTURE><button>SAVE</button></a>
+          <a href=# id=START><div class="button">START</div></a>
+          <a href=# id=CALIBRATE><div class="button">CALIBRATE</div></a>
+          <a href=# id=STOP><div class="button">STOP</div></a>
+          <a href="capture" id=CAPTURE><div class="button">SAVE</div></a>
       </div>
       <div class="controls">
-          <h2> Manual Controls </h2> 
-          <a href=# id=UP><button>UP</button></a>
-          <a href=# id=DOWN><button>DOWN</button></a>
-          <a href=# id=CENTER><button>CENTER</button></a>
-          <a href=# id=LEFT><button>LEFT</button></a>
-          <a href=# id=RIGHT><button>RIGHT</button></a>
+          <h2> Manual Controls </h2>
+	  <div class="control_grid">
+          	<a href=# id=UP><div class="button" id="UP_box">UP</div></a>
+		<a href=# id=DOWN><div class="button" id="DOWN_box">DOWN</div></a>
+		<a href=# id=CENTER><div class="button" id="CENTER_box">CENTER</div></a>
+		<a href=# id=LEFT><div class="button" id="LEFT_box">LEFT</div></a>
+		<a href=# id=RIGHT><div class="button" id="RIGHT_box">RIGHT</div></a>		
+          </div>
       </div>
     </div>
     </div>
