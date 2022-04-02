@@ -18,10 +18,10 @@ ROT_RESTRICT_FACTOR = .05 # restict PWM to this much of full rotation
 MAX_ADJUSTED = int(MAX_SERVO - (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
 MIN_ADJUSTED = int(MIN_SERVO + (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
 
-SERVO_PIN_1 = 17
-SERVO_PIN_2 = 4
-BIAS1 = -20
-BIAS2 = -120
+SERVO_PIN_1 = 4
+SERVO_PIN_2 = 17
+BIAS1 = -120
+BIAS2 = -20
 
 pwm = pigpio.pi()
 
@@ -41,7 +41,7 @@ def releasePWM(gpio):
 def current_pwm(gpio, bias):
     return pwm.get_servo_pulsewidth(gpio) - bias
 
-def smooth_rotate(gpio, target, step_size=20, delay=0.1, bias=0):
+def smooth_rotate(gpio, target, step_size=10, delay=0.1, bias=0):
     starting_val = current_pwm(gpio, bias)
     
     if (target < starting_val):

@@ -161,9 +161,8 @@ def up():
     global pwm1
     print("up")
     initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
+    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-50, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
-    # pwm.set_servo_pulsewidth(SERVO_PIN_1,2000)
     return json.dumps({"success": True}), 200
 
 @app.route('/down')
@@ -171,9 +170,8 @@ def down():
     global pwm1
     print("down")
     initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
+    pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+50, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
-    # pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
     return json.dumps({"success": True}), 200
 
 @app.route('/center')
@@ -196,9 +194,8 @@ def left():
     global pwm2
     print("left")
     initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
+    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-50, bias=BIAS2)
     releasePWM(SERVO_PIN_2)
-    # pwm.set_servo_pulsewidth(SERVO_PIN_2,500)    
     return json.dumps({"success": True}), 200
 
 @app.route('/right')
@@ -206,9 +203,8 @@ def right():
     global pwm2
     print("right")
     initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
+    pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+50, bias=BIAS2)
     releasePWM(SERVO_PIN_2)
-    # pwm.set_servo_pulsewidth(SERVO_PIN_2,1000)
     return json.dumps({"success": True}), 200
 
 @app.route('/grid_click', methods=['POST'])
@@ -299,6 +295,8 @@ if __name__ == '__main__':
     # initialize servos
     pwm1 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
     pwm2 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
+    # initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    # initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
 
     # ensure servo cleanup on app exit
     atexit.register(servo_cleanup)
