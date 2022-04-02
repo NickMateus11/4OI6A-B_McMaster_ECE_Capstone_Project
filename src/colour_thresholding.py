@@ -63,7 +63,7 @@ def locate_ball(frame, lower_bound, upper_bound, convert_HSV=False):
 
     if len(cnts):
         cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
-        if cv2.minEnclosingCircle(cnts[0])[1] > 1: # check radius 
+        if cv2.minEnclosingCircle(cnts[0])[1] > 5: # check radius 
             ((x, y), r) = cv2.minEnclosingCircle(cnts[0])
             return (x, y), r, mask
         

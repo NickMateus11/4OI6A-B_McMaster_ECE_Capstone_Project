@@ -224,6 +224,10 @@ def solve_maze():
     for i in range(len(maze)): # switch 1s and 0s (convention)
         for j in range(len(maze[0])):
             maze[i][j] = int(not maze[i][j])
+    
+    for ob_coord in maze_thread.obstacles:
+        cx,cy = ob_coord
+        maze[cy][cx] = 1 # make obstacles seem like a wall
 
     path = solve(maze, maze_thread.ball_position[::-1], maze_thread.target_cell[::-1])
 
