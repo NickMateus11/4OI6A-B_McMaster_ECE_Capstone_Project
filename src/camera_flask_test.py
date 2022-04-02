@@ -148,11 +148,13 @@ def capture():
 
 @app.route('/start')
 def start():
+    global control_mode
     control_mode = 1
     return json.dumps({"success": True}), 200
 
 @app.route('/stop')
 def stop():
+    global control_mode
     control_mode = 0
     return json.dumps({"success": True}), 200
 
