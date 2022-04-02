@@ -48,6 +48,9 @@
           <a href=# id=STOP><button>STOP</button></a>
           <a href="capture" id=CAPTURE><button>SAVE</button></a>
       </div>
+      <div class="mode">
+	  <h2> Current Mode: <span class="current_mode"></span></h2>  
+      </div>
       <div class="controls">
           <h2> Manual Controls </h2>
 	  <div class="control_grid">
@@ -85,6 +88,17 @@
     sens_slider.oninput = function() {
       sens_val.innerHTML = this.value;
     }
+    
+    var stop_button = document.getElementById("STOP");
+    var start_button = document.getElementById("START");
+    var mode_text = document.querySelector(".current_mode");
+    mode_text.innerHTML = "AUTOMATIC";    
+    stop_button.addEventListener('click',()=>{	
+        mode_text.innerHTML  = "MANUAL";
+	}); 
+    start_button.addEventListener('click',()=>{
+        mode_text.innerHTML  = "AUTOMATIC";
+        });
   </script>
 
 </html>
