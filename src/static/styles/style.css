@@ -8,6 +8,7 @@ body {
 	border: 1px solid black;
 	padding: 0; 
 	margin: 8px;  
+	font-family: Arial;
 }
 
 a {
@@ -28,12 +29,34 @@ a {
 	margin-right: 10px;   
 }
 
+.settings h2{
+	margin-bottom: 0px; 
+}
+
 .sliders, .options {
 	margin-bottom: 10px;
 }
 
 .slider {
 	width: 100%; 
+}
+
+#PAYLOAD {
+	background-color: white;
+  	border: 1px solid black;
+  	color: black;
+  	text-align: center;
+  	text-decoration: none;
+	text-transform: uppercase; 
+  	display: inline-block;
+  	font-size: 16px;
+	padding: 10px;
+	margin: 5px; 
+	width: 100%; 
+}
+
+#PAYLOAD:hover{
+	background: #ABCDEF;
 }
 
 .control_grid{
