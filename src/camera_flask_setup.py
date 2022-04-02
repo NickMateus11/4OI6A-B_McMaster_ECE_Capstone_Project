@@ -68,7 +68,7 @@ class VideoCamera(object):
 
     def get_corner_mask(self):
         frame = self.get_latest_processed_frame()
-        frame = locate_corners(frame, (40,35,95), (75,255,255), convert_HSV=True, return_frame=True)
+        frame = locate_corners(frame, (20,40,90), (35,255,255), convert_HSV=True, return_frame=True)
         return frame
 
     def __get_latest_processed_frame(self):
@@ -85,12 +85,12 @@ class VideoCamera(object):
 
         if self.skew_fix:
             # corners = locate_corners(frame, (31,8,103), (55,66,255), convert_HSV=True)
-            corners = locate_corners(frame, (40,35,95), (75,255,255), convert_HSV=True)
+            corners = locate_corners(frame, (20,40,90), (35,255,255), convert_HSV=True)
             if (len(corners)==4):
                 corner_pts = np.array([(x,y) for (x,y), r in corners])
                 corner_pts = order_points(corner_pts)
                 # small shift outwards
-                shift = 20
+                shift = 15
                 corner_pts[0  ] -= shift if min(corner_pts[0])  > shift else 0
                 corner_pts[2  ] += shift if max(corner_pts[2])  < min(self.w, self.h)-shift else 0
                 corner_pts[1,0] += shift if corner_pts[1,0]     < min(self.w, self.h)-shift else 0
@@ -99,16 +99,16 @@ class VideoCamera(object):
                 corner_pts[3,1] += shift if corner_pts[3,1]     < min(self.w, self.h)-shift else 0
 
                 for i in range(len(self.avg_corner_pts)):
-                    if sum(abs(corner_pts[i]-self.avg_corner_pts[i])) > 30: # big change - disregard
+                    if sum(abs(corner_pts[i]-self.avg_corner_pts[i])) > 50: # big change - disregard
                         break
                 else:
-                    if (len(self.corner_pts_lookback) == 10):
+                    if (len(self.corner_pts_lookback) == 5):
                         self.corner_pts_lookback.pop(0) # get rid of last element
                     self.corner_pts_lookback.append(corner_pts)
                     self.avg_corner_pts = np.average(np.array(self.corner_pts_lookback), axis=0)
             
-            # if len(self.avg_corner_pts) == 4:
-            #     frame = four_point_transform(frame, self.avg_corner_pts)
+            if len(self.avg_corner_pts) == 4:
+                frame = four_point_transform(frame, self.avg_corner_pts)
         
         self.latest_processed_frame = frame
 

@@ -9,7 +9,7 @@ import pigpio
 import io
 import cv2
 import numpy as np
-
+import atexit
 
 from maze_thread import MazeThread 
 from image_utils import draw_grid, trim_maze_edge
@@ -19,6 +19,7 @@ from colour_thresholding import locate_ball
 from bfs import solve 
 from image_test import maze_compression
 from click_test import draw_path 
+from click_test import servo_move
 
 import servotest # instantiates pwm
 from servotest import smooth_rotate, current_pwm, initilizePWM, releasePWM
@@ -154,7 +155,6 @@ def calibrate():
 def up():
     global pwm1
     print("up")
-    print("0 deg")
     initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
     pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
@@ -165,18 +165,31 @@ def up():
 def down():
     global pwm1
     print("down")
-    print("90 deg")
     initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
     pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
     # pwm.set_servo_pulsewidth(SERVO_PIN_1,500)
     return json.dumps({"success": True}), 200
 
+@app.route('/center')
+def center():
+    global pwm1, pwm2
+    print("center")
+
+    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    pwm1 = smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
+    releasePWM(SERVO_PIN_1)
+
+    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+    pwm2 = smooth_rotate(SERVO_PIN_2, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS2)
+    releasePWM(SERVO_PIN_2)
+
+    return json.dumps({"success": True}), 200
+
 @app.route('/left')
 def left():
     global pwm2
     print("left")
-    print("90 deg")
     initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
     pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
     releasePWM(SERVO_PIN_2)
@@ -187,7 +200,6 @@ def left():
 def right():
     global pwm2
     print("right")
-    print("0 deg")
     initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
     pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
     releasePWM(SERVO_PIN_2)
@@ -207,10 +219,59 @@ def grid_click():
 
 def solve_maze():
     maze = maze_thread.read_latest()
+
     for i in range(len(maze)): # switch 1s and 0s (convention)
         for j in range(len(maze[0])):
             maze[i][j] = int(not maze[i][j])
-    return solve(maze, maze_thread.ball_position[::-1], maze_thread.target_cell[::-1])
+
+    path = solve(maze, maze_thread.ball_position[::-1], maze_thread.target_cell[::-1])
+
+    # convert path into commands for servo movement
+    if path is not None:
+        commands = servo_move(path[::-1])[1::2]
+        next_2 = commands[:2]
+        merged_command = ()
+        if len(next_2) == 2:
+            merged_command = (
+                next_2[0][0] if next_2[0][0] != 'none' else next_2[1][0],
+                next_2[0][1] if next_2[0][1] != 'none' else next_2[1][1]
+            )
+        else:
+            merged_command = next_2[0]
+
+        # print(merged_command)
+        # TODO: cleanup this into functions
+        global pwm1, pwm2
+        if merged_command[0] == 'left':
+            initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+            pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
+            releasePWM(SERVO_PIN_2)
+
+        elif merged_command[0] == 'right':
+            initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+            pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
+            releasePWM(SERVO_PIN_2)
+        
+        if merged_command[1] == 'up':
+            initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+            pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
+            releasePWM(SERVO_PIN_1)
+            
+        elif merged_command[1] == 'down':
+            initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+            pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
+            releasePWM(SERVO_PIN_1)
+    
+    return path
+
+def servo_cleanup():
+    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
+    smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
+    releasePWM(SERVO_PIN_1)
+
+    initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
+    smooth_rotate(SERVO_PIN_2, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS2)
+    releasePWM(SERVO_PIN_2)
 
 if __name__ == '__main__':
 
@@ -233,10 +294,9 @@ if __name__ == '__main__':
     # initialize servos
     pwm1 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
     pwm2 = (MAX_ADJUSTED+MIN_ADJUSTED)//2
-    initilizePWM(SERVO_PIN_1, pwm1 , BIAS1)
-    initilizePWM(SERVO_PIN_2, pwm2 , BIAS2)
-    releasePWM(SERVO_PIN_1)
-    releasePWM(SERVO_PIN_2)
+
+    # ensure servo cleanup on app exit
+    atexit.register(servo_cleanup)
 
     # start flask server
     app.run(host='0.0.0.0', port=5000, threaded=True) #debug incompatible with resources available

@@ -41,6 +41,14 @@ jQuery(document).ready(function($) {
         return false;
     });
 
+    $('#CENTER').bind('click', function() {
+        $.getJSON('/center',
+            function(data) {
+        //do nothing
+        });
+        return false;
+    });
+
 
     $('#LEFT').bind('click', function() {
         $.getJSON('/left',
@@ -62,7 +70,7 @@ jQuery(document).ready(function($) {
     // $('#PAYLOAD').bind('click', function() {
     //     $.post('/',
     //         function(data) {
-    //     //do nothing
+        //do nothing
     //     });
     //     return false;
     // });

@@ -178,21 +178,24 @@ def servo_move(path):
             v_move = "none"
         moves.append((h_move, v_move))
     moves.append(("none", "none"))
-    print(moves)
-    for j in range(len(moves)-1):
-        if (moves[j][0] != moves[j+1][0]) and (moves[j][1] != moves[j+1][1]):
-            print("transition at move:", j, "from direction:", moves[j][0] if moves[j][1] == "none" else moves[j][1], ", to direction:",
-                  moves[j+1][0] if moves[j+1][1] == "none" else moves[j+1][1])
-            test.append((j, moves[j][0] if moves[j][1]
-                         == "none" else moves[j][1]))
-    test.append((j, moves[j][0] if moves[j][1]
-                 == "none" else moves[j][1]))
-    print(test)
-    if test != []:
-        test2.append((test[0][0]-0, test[0][1]))
-        for k in range(len(test)-1):
-            test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
-        print("steps from start to end are:", test2)
+    # # print(moves)
+    
+    # for j in range(len(moves)-1):
+    #     if (moves[j][0] != moves[j+1][0]) and (moves[j][1] != moves[j+1][1]):
+    #         # print("transition at move:", j, "from direction:", moves[j][0] if moves[j][1] == "none" else moves[j][1], ", to direction:",
+    #             #   moves[j+1][0] if moves[j+1][1] == "none" else moves[j+1][1])
+    #         test.append((j, moves[j][0] if moves[j][1]
+    #                      == "none" else moves[j][1]))
+    # test.append((j, moves[j][0] if moves[j][1]
+    #              == "none" else moves[j][1]))
+    # # print(test)
+    # if test != []:
+    #     test2.append((test[0][0]-0, test[0][1]))
+    #     for k in range(len(test)-1):
+    #         test2.append((test[k+1][0]-test[k][0], test[k+1][1]))
+    #     # print("steps from start to end are:", test2)
+    
+    return moves
 
     # for i in range(len(test2)):
     #     print(i,test2[i][1])

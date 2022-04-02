@@ -8,6 +8,12 @@ body {
 	border: 1px solid black;
 	padding: 0; 
 	margin: 8px;  
+	font-family: Arial;
+}
+
+a {
+	text-decoration: none;
+	text-transform: uppercase; 
 }
 
 .feed_settings {
@@ -19,7 +25,122 @@ body {
 }
 
 .settings {
-        border: 1px solid black;
-	width: 20%;  
+	width: 20%;
+	margin-right: 10px;   
 }
 
+.settings h2{
+	margin-bottom: 0px; 
+}
+
+.sliders, .options {
+	margin-bottom: 10px;
+}
+
+.slider {
+	width: 100%; 
+}
+
+#PAYLOAD {
+	background-color: white;
+  	border: 1px solid black;
+  	color: black;
+  	text-align: center;
+  	text-decoration: none;
+	text-transform: uppercase; 
+  	display: inline-block;
+  	font-size: 16px;
+	padding: 10px;
+	margin: 5px; 
+	width: 100%; 
+}
+
+#PAYLOAD:hover{
+	background: #ABCDEF;
+}
+
+.control_grid{
+	display: grid;
+	grid-template-rows:1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 0px;
+	height: 100%;
+	border: 1px solid black;  
+}
+
+#UP_box, #DOWN_box, #CENTER_box, #LEFT_box, #RIGHT_box {
+	text-align: center;
+	align-items: center;
+	justify-content: center; 
+        padding: 10px;  
+        margin:  5px;
+        border: 1px solid black;
+        color: black;  
+}
+
+.button {
+	background: white;
+        text-align: center;
+        align-items: center;
+        justify-content: center; 
+        padding: 10px;  
+        margin:  5px;
+        border: 1px solid black;
+        color: black;  
+}
+
+.button:hover{
+	background: #ABCDEF ; 
+}
+
+#UP { 
+	justify-content: center;
+	align-items: center; 
+	grid-row-start: 1;
+	grid-column-start: 2;
+	grid-row-end: 2;
+	grid-column-end: 3;	
+}
+
+#DOWN {
+        justify-content: center;
+        align-items: center;  
+        grid-row-start: 3;
+        grid-column-start: 2;      
+        grid-row-end: 4;
+        grid-column-end: 3;     
+}
+
+#CENTER { 
+        justify-content: center;
+        align-items: center;  
+        grid-row-start: 2;
+        grid-column-start: 2;      
+        grid-row-end: 3;
+        grid-column-end: 3;     
+}
+
+#LEFT { 
+        justify-content: center;
+        align-items: center;  
+        grid-row-start: 2;
+        grid-column-start: 1;      
+        grid-row-end: 3;
+        grid-column-end: 2;     
+}
+
+#RIGHT {  
+        justify-content: center;
+        align-items: center; 
+	grid-row-start: 2;
+        grid-column-start: 3;      
+        grid-row-end: 3;
+        grid-column-end: 4;     
+}
+
+#UP, #DOWN, #CENTER, #LEFT, #RIGHT {
+	text-decoration: none;
+        height: 100%;
+	width: 100%;
+        color: black;   
+}

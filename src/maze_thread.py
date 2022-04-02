@@ -77,6 +77,10 @@ class MazeThread:
 				gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 				self.ref_maze = preprocess_image(gray_img, **preprocess)
 
+				# trim original image
+				_, (start_col, end_col, start_row, end_row) = trim_maze_edge(self.ref_maze)
+				img = img[start_col:end_col, start_row: end_row]
+
 				(x,y), r, mask = locate_ball(img, (120,0,0), (255,255,255), convert_HSV=True)
 				if (x and y):
 					cx = int(x/img.shape[1] * (self.x_grids)) * 2 + 1
