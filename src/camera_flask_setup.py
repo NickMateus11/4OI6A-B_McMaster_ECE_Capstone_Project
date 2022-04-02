@@ -85,7 +85,7 @@ class VideoCamera(object):
 
         if self.skew_fix:
             # corners = locate_corners(frame, (31,8,103), (55,66,255), convert_HSV=True)
-            corners = locate_corners(frame, (20,40,90), (35,255,255), convert_HSV=True)
+            corners = locate_corners(frame, (20,40,90), (60,255,255), convert_HSV=True)
             if (len(corners)==4):
                 corner_pts = np.array([(x,y) for (x,y), r in corners])
                 corner_pts = order_points(corner_pts)
