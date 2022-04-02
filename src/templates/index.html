@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Raspberry Pi - Surveillance Camera</title>
+    <title>Maze Runner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   </head>
 
   <body>
-    <h1>Raspberry Pi - Surveillance Camera</h1>
+    <h1>Maze Runner: Autonomous Maze Solving Robot</h1>
     <div class="feed_settings">
     <div class="datafeeds">
+      <h2> Video Feeds </h2>
       <img src="video_feed" width="{{ v_width }}" height="{{ v_height }}">
       <img src="processed_feed" width="{{ p_width }}" height="{{ p_height }}">
       <img src="ref_feed" width="{{ p_width }}" height="{{ p_height }}">
+      <h2> Clickable Grid & Maze Path</h2> 
       <table width="{{ p_width }}" height="{{ p_height }}" background="maze_feed" border="1" cellspacing="0" cellpadding="0" style="table-layout:fixed; background-repeat: no-repeat">
         {%for i in range(0, 17)%}
           <tr>
@@ -20,12 +22,12 @@
           {%endfor%}
           </tr>
         {%endfor%}
-      </table> 
+      </table>
       <img src="maze_feed" width="{{ p_width }}" height="{{ p_height }}">
     </div>
     <div class="settings">
       <div class="sliders">
-      <h2> Settings </h2>
+      <h2> Video Feed Settings </h2>
       <form method="post">
             <br>
                 <p>Blur: <span id="blur"></span> </p>

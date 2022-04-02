@@ -5,15 +5,22 @@
 }
 body {
 	background: #EEFFFF ; 
-	border: 1px solid black;
 	padding: 0; 
-	margin: 8px;  
-	font-family: Arial;
+	margin: 1px 8px 0px 8px;  
+	font-family: Arial; 
+}
+
+h1 {
+	margin: 0 0 0 10px; 
 }
 
 a {
 	text-decoration: none;
 	text-transform: uppercase; 
+}
+
+img {
+	border: 1px solid black;
 }
 
 .feed_settings {
@@ -22,6 +29,11 @@ a {
 
 .datafeeds{
 	width: 80%; 
+	margin-left: 10px; 
+}
+
+table {
+	margin-bottom: 10px; 
 }
 
 .settings {
@@ -29,7 +41,7 @@ a {
 	margin-right: 10px;   
 }
 
-.settings h2{
+h2{
 	margin-bottom: 0px; 
 }
 
