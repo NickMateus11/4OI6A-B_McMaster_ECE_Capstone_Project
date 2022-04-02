@@ -36,17 +36,18 @@ def locate_corners(frame, lower_bound, upper_bound, convert_HSV=False, return_fr
         #     break
     else:
         return [cv2.minEnclosingCircle(cnt) for cnt in cnts[:4]]
+
+    # return [cv2.minEnclosingCircle(cnt) for cnt in cnts[:4]]
     
     # cv2.drawContours(frame, cnts[:4], -1, (0, 0, 255), 2)
     # cv2.imshow("masked", frame)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    return np.array([])
+    
+    # return np.array([])
 
 
 def locate_ball(frame, lower_bound, upper_bound, convert_HSV=False):
-    # frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    # frame_blur = cv2.blur(frame, (15,15))
     if convert_HSV:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -62,8 +63,10 @@ def locate_ball(frame, lower_bound, upper_bound, convert_HSV=False):
 
     if len(cnts):
         cnts = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt), reverse=True)
-        ((x, y), r) = cv2.minEnclosingCircle(cnts[0])
-        return (x, y), r, mask
+        if cv2.minEnclosingCircle(cnts[0])[1] > 1: # check radius 
+            ((x, y), r) = cv2.minEnclosingCircle(cnts[0])
+            return (x, y), r, mask
+        
     return (None, None), None, None
 
 

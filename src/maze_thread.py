@@ -5,7 +5,7 @@ from threading import Thread
 from camera_flask_setup import VideoCamera
 import time
 
-from colour_thresholding import locate_ball
+from colour_thresholding import locate_ball, locate_hazards
 
 from image_utils import trim_maze_edge
 
@@ -28,6 +28,7 @@ class MazeThread:
 		self.ref_maze = None
 		self.ball_position = None
 		self.target_cell = None
+		self.obstacles = None
 		self.stopped = False
 
 		self.update_maze()
@@ -82,11 +83,21 @@ class MazeThread:
 				img = img[start_col:end_col, start_row: end_row]
 
 				(x,y), r, mask = locate_ball(img, (120,0,0), (255,255,255), convert_HSV=True)
+				self.ball_position = None
 				if (x and y):
 					cx = int(x/img.shape[1] * (self.x_grids)) * 2 + 1
 					cy = int(y/img.shape[0] * (self.y_grids)) * 2 + 1
 
 					self.ball_position = (cx, cy)
+
+				obstacles = locate_hazards(img, (40, 100, 45), (90, 255, 255), convert_HSV=True)
+				self.obstacles = []
+				if len(obstacles):
+					for x,y in obstacles:
+						cx = int(x/img.shape[1] * (self.x_grids)) * 2 + 1
+						cy = int(y/img.shape[0] * (self.y_grids)) * 2 + 1
+
+						self.obstacles.append( (cx,cy) )
 
 			# if the thread indicator variable is set, stop the thread
 			if self.stopped:
@@ -95,15 +106,19 @@ class MazeThread:
 	def read_latest(self):
 		return self.maze.copy()
 	
-	def get_scaled_maze(self, include_ball=True):
+	def get_scaled_maze(self):
 		maze = cv2.cvtColor(self.read_latest()*255, cv2.COLOR_GRAY2BGR)
 		processed_h, processed_w = (min(self.video_stream.h, self.video_stream.w) , )*2
 
-		if include_ball and self.ball_position is not None:
+		if self.ball_position is not None:
 			maze[self.ball_position[1], self.ball_position[0],:] = (0,255,0) 
 
 		if self.target_cell is not None and list(maze[self.target_cell[1], self.target_cell[0],:]) != [0,0,0]:
 			maze[self.target_cell[1], self.target_cell[0],:] = (128,0,128) 
+
+		if self.obstacles is not None:
+			for (x,y) in self.obstacles:
+				maze[y,x,:] = (0,0,255)
 
 		upscaled_maze = cv2.resize(maze, (processed_w, processed_h), interpolation=cv2.INTER_NEAREST)	
 

@@ -72,9 +72,9 @@ def processed_frame_gen():
     while True:
         frame = pi_camera.get_latest_processed_frame()
 
-        corners = pi_camera.avg_corner_pts
-        for c in corners:
-            cv2.circle(frame, tuple(c), 5, (0,255,0), thickness=-1)
+        # corners = pi_camera.avg_corner_pts
+        # for c in corners:
+        #     cv2.circle(frame, tuple(c), 5, (0,255,0), thickness=-1)
 
         # f = pi_camera.get_corner_mask()
         # cnts = cv2.findContours(f, cv2.RETR_TREE,
@@ -149,6 +149,11 @@ def capture():
 @app.route('/calibrate')
 def calibrate():
     maze_thread.update_maze()
+    return json.dumps({"success": True}), 200
+
+@app.route('/reset')
+def reset():
+    pi_camera.avg_corner_pts = [] # empty the avg points to allow corner detect to reset
     return json.dumps({"success": True}), 200
 
 @app.route('/up')

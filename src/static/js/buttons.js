@@ -25,6 +25,14 @@ jQuery(document).ready(function($) {
         return false;
     });
 
+    $('#RESET').bind('click', function() {
+        $.getJSON('/reset',
+            function(data) {
+        //do nothing
+        });
+        return false;
+    });
+
     $('#UP').bind('click', function() {
         $.getJSON('/up',
             function(data) {

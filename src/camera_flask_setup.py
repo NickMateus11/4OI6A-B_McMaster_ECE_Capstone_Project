@@ -100,6 +100,7 @@ class VideoCamera(object):
 
                 for i in range(len(self.avg_corner_pts)):
                     if sum(abs(corner_pts[i]-self.avg_corner_pts[i])) > 50: # big change - disregard
+                        pass
                         break
                 else:
                     if (len(self.corner_pts_lookback) == 5):
