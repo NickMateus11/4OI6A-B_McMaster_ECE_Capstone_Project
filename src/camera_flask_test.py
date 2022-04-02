@@ -152,7 +152,7 @@ def start():
     return json.dumps({"success": True}), 200
 
 @app.route('/stop')
-def start():
+def stop():
     control_mode = 0
     return json.dumps({"success": True}), 200
 
