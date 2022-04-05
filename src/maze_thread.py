@@ -90,7 +90,7 @@ class MazeThread:
 
 					self.ball_position = (cx, cy)
 
-				obstacles = locate_hazards(img, (40, 100, 45), (90, 255, 255), convert_HSV=True)
+				obstacles = locate_hazards(img, (50, 100, 45), (90, 255, 255), convert_HSV=True)
 				self.obstacles = []
 				if len(obstacles):
 					for x,y in obstacles:

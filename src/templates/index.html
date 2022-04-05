@@ -31,9 +31,9 @@
       <form method="post">
             <br>
                 <p>Blur: <span id="blur"></span> </p>
-                <input type="range" min="1" max="100" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
+                <input type="range" min="1" max="15" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
                 <p>Threshold: <span id="thresh"></span> </p>
-                <input type="range" min="1" max="100" value="{{setting_thresh}}" class="slider" id="threshRange"  name="thresh"></input>
+                <input type="range" min="10" max="64" value="{{setting_thresh}}" class="slider" id="threshRange"  name="thresh"></input>
                 <p>Sensitivity: <span id="sens"></span>% </p>
                 <input type="range" min="0" max="100" value="{{setting_sens}}" class="slider" id="sensRange"  name="sens"></input>
             <br>
@@ -92,7 +92,7 @@
     var stop_button = document.getElementById("STOP");
     var start_button = document.getElementById("START");
     var mode_text = document.querySelector(".current_mode");
-    mode_text.innerHTML = "AUTOMATIC";    
+    mode_text.innerHTML = "MANUAL";    
     stop_button.addEventListener('click',()=>{	
         mode_text.innerHTML  = "MANUAL";
 	}); 

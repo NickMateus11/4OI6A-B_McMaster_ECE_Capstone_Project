@@ -1,3 +1,4 @@
+from platform import release
 import pigpio
 import time
 import random
@@ -13,15 +14,16 @@ sudo pigpiod
 MAX_SERVO = 2500
 MIN_SERVO = 500
 
-ROT_RESTRICT_FACTOR = .05 # restict PWM to this much of full rotation
+ROT_RESTRICT_FACTOR = .07 # restict PWM to this much of full rotation
 
 MAX_ADJUSTED = int(MAX_SERVO - (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
 MIN_ADJUSTED = int(MIN_SERVO + (MAX_SERVO-MIN_SERVO)//2 * (1-ROT_RESTRICT_FACTOR))
 
+
 SERVO_PIN_1 = 4
 SERVO_PIN_2 = 17
-BIAS1 = -120
-BIAS2 = -20
+BIAS1 = 600
+BIAS2 = -600
 
 pwm = pigpio.pi()
 
@@ -32,16 +34,16 @@ pwm.set_PWM_frequency(SERVO_PIN_2, 50)
 
 def initilizePWM(gpio, pwm_val, bias):
     pwm.set_mode(gpio, pigpio.OUTPUT)
-    pwm.set_PWM_frequency(gpio, 50)
+    pwm.set_PWM_frequency(gpio, 100)
     pwm.set_servo_pulsewidth(gpio, pwm_val+bias)
 
 def releasePWM(gpio):
-    pwm.set_mode(gpio, pigpio.INPUT)
+    pwm.set_servo_pulsewidth(gpio, 0)
 
 def current_pwm(gpio, bias):
     return pwm.get_servo_pulsewidth(gpio) - bias
 
-def smooth_rotate(gpio, target, step_size=10, delay=0.1, bias=0):
+def smooth_rotate(gpio, target, step_size=5, delay=0.01, bias=0):
     starting_val = current_pwm(gpio, bias)
     
     if (target < starting_val):
@@ -71,6 +73,7 @@ def smooth_rotate(gpio, target, step_size=10, delay=0.1, bias=0):
     #     print(target)
     #     pwm.set_servo_pulsewidth(gpio, target+bias)
     
+    time.sleep(0.2)
     return current_pwm(gpio, bias)
 
 
@@ -84,9 +87,9 @@ def main():
         while (True):
             x = input("+/-: ")
             if x =='+':
-                compensation = 100 
+                compensation = 50 
             elif x=='-':
-                compensation = -100
+                compensation = -50
             else:
                 continue
 
@@ -96,9 +99,7 @@ def main():
             elif (val < MIN_ADJUSTED):
                 val = MIN_ADJUSTED
 
-            initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
             pwm1 = smooth_rotate(SERVO_PIN_1, target=val, bias=BIAS1)
-            releasePWM(SERVO_PIN_1)
             print(pwm1)
 
             time.sleep(0.5)
@@ -106,10 +107,10 @@ def main():
     except KeyboardInterrupt:
         pass
     
-    initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
     smooth_rotate(SERVO_PIN_1, target=(MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
     releasePWM(SERVO_PIN_1)
 
 
 if __name__ == '__main__':
+    initilizePWM(SERVO_PIN_1, (MAX_ADJUSTED+MIN_ADJUSTED)//2, bias=BIAS1)
     main()

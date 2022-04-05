@@ -174,7 +174,7 @@ def up():
         global pwm1
         print("up")
         initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-        pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-50, bias=BIAS1)
+        pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+50, bias=BIAS1)
         releasePWM(SERVO_PIN_1)
     return json.dumps({"success": True}), 200
 
@@ -184,7 +184,7 @@ def down():
         global pwm1
         print("down")
         initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-        pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+50, bias=BIAS1)
+        pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-50, bias=BIAS1)
         releasePWM(SERVO_PIN_1)
     return json.dumps({"success": True}), 200
 
@@ -267,22 +267,22 @@ def solve_maze():
             global pwm1, pwm2
             if merged_command[0] == 'left':
                 initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-                pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-100, bias=BIAS2)
+                pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2-50, bias=BIAS2)
                 releasePWM(SERVO_PIN_2)
 
             elif merged_command[0] == 'right':
                 initilizePWM(SERVO_PIN_2, pwm2, BIAS2)
-                pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+100, bias=BIAS2)
+                pwm2 = smooth_rotate(SERVO_PIN_2, target=pwm2+50, bias=BIAS2)
                 releasePWM(SERVO_PIN_2)
             
             if merged_command[1] == 'up':
                 initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-                pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-100, bias=BIAS1)
+                pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+50, bias=BIAS1)
                 releasePWM(SERVO_PIN_1)
                 
             elif merged_command[1] == 'down':
                 initilizePWM(SERVO_PIN_1, pwm1, BIAS1)
-                pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1+100, bias=BIAS1)
+                pwm1 = smooth_rotate(SERVO_PIN_1, target=pwm1-50, bias=BIAS1)
                 releasePWM(SERVO_PIN_1)
     
     return path
