@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Maze Runner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+  </head>
+
+  <body>
+    <h1>Maze Runner: Autonomous Maze Solving Robot</h1>
+    <div class="feed_settings">
+    <div class="datafeeds">
+      <h2> Video Feeds </h2>
+      <img src="video_feed" width="{{ v_width }}" height="{{ v_height }}">
+      <img src="processed_feed" width="{{ p_width }}" height="{{ p_height }}">
+      <img src="ref_feed" width="{{ p_width }}" height="{{ p_height }}">
+      <h2> Clickable Grid & Maze Path</h2> 
+      <table width="{{ p_width }}" height="{{ p_height }}" background="maze_feed" border="1" cellspacing="0" cellpadding="0" style="table-layout:auto; background-repeat: no-repeat">
+        {%for i in range(0, 17)%}
+          <tr>
+          {%for j in range(0, 17)%}
+            <td class='clickable-cell' id="{{ i*17 + j }}"></td>
+          {%endfor%}
+          </tr>
+        {%endfor%}
+      </table>
+      <!-- <img src="maze_feed" width="{{ p_width }}" height="{{ p_height }}"> --> 
+    </div>
+    <div class="settings">
+      <div class="sliders">
+      <h2> Video Feed Settings </h2>
+      <form method="post">
+            <br>
+                <p>Blur: <span id="blur"></span> </p>
+                <input type="range" min="1" max="15" value="{{setting_blur}}" class="slider" id="blurRange"  name="blur"></input>
+                <p>Threshold: <span id="thresh"></span> </p>
+                <input type="range" min="10" max="64" value="{{setting_thresh}}" class="slider" id="threshRange"  name="thresh"></input>
+                <p>Sensitivity: <span id="sens"></span>% </p>
+                <input type="range" min="0" max="100" value="{{setting_sens}}" class="slider" id="sensRange"  name="sens"></input>
+            <br>
+            <button type="submit" id="PAYLOAD">Submit</button>
+      </form>
+      </div> 
+      <div class="options">
+	  <h2> Options </h2>
+          <a href=# id=START><button>START</button></a>
+          <a href=# id=CALIBRATE><button>CALIBRATE</button></a>
+          <a href=# id=RESET><button>RESET</button></a>
+          <a href=# id=STOP><button>STOP</button></a>
+          <a href="capture" id=CAPTURE><button>SAVE</button></a>
+      </div>
+      <div class="mode">
+	  <h2> Current Mode: <span class="current_mode"></span></h2>  
+      </div>
+      <div class="controls">
+          <h2> Manual Controls </h2>
+	  <div class="control_grid">
+          	<a href=# id=UP><div class="button" id="UP_box">UP</div></a>
+		<a href=# id=DOWN><div class="button" id="DOWN_box">DOWN</div></a>
+		<a href=# id=CENTER><div class="button" id="CENTER_box">CENTER</div></a>
+		<a href=# id=LEFT><div class="button" id="LEFT_box">LEFT</div></a>
+		<a href=# id=RIGHT><div class="button" id="RIGHT_box">RIGHT</div></a>		
+          </div>
+      </div>
+    </div>
+    </div>
+  </body>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/buttons.js') }}"></script>
+  <script>
+    var blur_slider = document.getElementById("blurRange");
+    var blur_val = document.getElementById("blur");
+    blur_val.innerHTML = blur_slider.value;
+    blur_slider.oninput = function() {
+      blur_val.innerHTML = this.value;
+    }
+
+    var thresh_slider = document.getElementById("threshRange");
+    var thresh_val = document.getElementById("thresh");
+    thresh_val.innerHTML = thresh_slider.value;
+    thresh_slider.oninput = function() {
+      thresh_val.innerHTML = this.value;
+    }
+
+    var sens_slider = document.getElementById("sensRange");
+    var sens_val = document.getElementById("sens");
+    sens_val.innerHTML = sens_slider.value;
+    sens_slider.oninput = function() {
+      sens_val.innerHTML = this.value;
+    }
+    
+    var stop_button = document.getElementById("STOP");
+    var start_button = document.getElementById("START");
+    var mode_text = document.querySelector(".current_mode");
+    mode_text.innerHTML = "MANUAL";    
+    stop_button.addEventListener('click',()=>{	
+        mode_text.innerHTML  = "MANUAL";
+	}); 
+    start_button.addEventListener('click',()=>{
+        mode_text.innerHTML  = "AUTOMATIC";
+        });
+  </script>
+
+</html>
